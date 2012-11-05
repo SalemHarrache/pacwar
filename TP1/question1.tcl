@@ -67,11 +67,11 @@ method TemperaturePresentation destructor {} {
 
 # ValueControl --
 
+
 inherit TemperatureControl Control
-method TemperatureControl constructor {parent value label unit} {
+method TemperatureControl constructor {value} {
    TemperatureAbstraction ${objName}_abst $objName $value
-   TemperaturePresentation ${objName}_pres $objName $label $unit
-   this inherited $parent ${objName}_abst ${objName}_pres
+   this inherited "" ${objName}_abst
 
    this change
 }
@@ -80,11 +80,38 @@ method TemperatureControl edit {newvalue} {
    $this(abstraction) edit $newvalue
 }
 
+method TemperatureControl get {} {
+   $this(abstraction) attribute value
+}
+
 method TemperatureControl change {} {
-   $this(presentation) change [$this(abstraction) attribute value]
+    foreach child $this(children) {
+        $child change
+    }
 }
 
 method TemperatureControl destructor {} {
+   this inherited
+}
+
+# Controleur Kelvin
+
+inherit TemperatureControlKelvin Control
+method TemperatureControlKelvin constructor {parent label unit} {
+   TemperaturePresentation ${objName}_pres $objName $label $unit
+   this inherited $parent "" ${objName}_pres
+   this change
+}
+
+method TemperatureControlKelvin edit {newvalue} {
+   $this(parent) edit $newvalue
+}
+
+method TemperatureControlKelvin change {} {
+   $this(presentation) change [$this(parent) get]
+}
+
+method TemperatureControlKelvin destructor {} {
    this inherited
 }
 
@@ -92,6 +119,8 @@ method TemperatureControl destructor {} {
 # main --
 if {[is_main]} {
    # executed only if the file is the main script
-   TemperatureControl agent_temp "" 10 Température "K"
+   TemperatureControl agent_central 10
+   TemperatureControlKelvin agent_temp_k agent_central Température "K"
+   TemperatureControlKelvin agent_temp_c agent_central Température "C"
 }
 

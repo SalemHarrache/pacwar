@@ -7,17 +7,21 @@ source [file join [file dirname [info script]] .. lib init.tcl]
 source [file join [file dirname [info script]] . question1.tcl]
 
 
-inherit TemperatureControlCelsius TemperatureControl
-method TemperatureControlCelsius constructor {parent value label unit} {
-   this inherited $parent $value $label $unit
+# Controleur Kelvin
+
+inherit TemperatureControlCelsius Control
+method TemperatureControlCelsius constructor {parent label unit} {
+   TemperaturePresentation ${objName}_pres $objName $label $unit
+   this inherited $parent "" ${objName}_pres
+   this change
 }
 
 method TemperatureControlCelsius edit {newvalue} {
-   $this(abstraction) edit [this celsius_to_kelvin $newvalue]
+   $this(parent) edit [this celsius_to_kelvin $newvalue]
 }
 
 method TemperatureControlCelsius change {} {
-   $this(presentation) change [this kelvin_to_celsius [$this(abstraction) attribute value]]
+   $this(presentation) change [this kelvin_to_celsius [$this(parent) get]]
 }
 
 method TemperatureControlCelsius destructor {} {
@@ -36,5 +40,6 @@ method TemperatureControlCelsius celsius_to_kelvin {value} {
 # main --
 if {[is_main]} {
    # executed only if the file is the main script
-   TemperatureControlCelsius agent_temp "" 10 Température "°C"
+   TemperatureControl agent_central 10
+   TemperatureControlCelsius agent_temp_c agent_central Température "°C"
 }
