@@ -6,81 +6,84 @@ exec wish "$0" "$@"
 source [file join [file dirname [info script]] .. lib init.tcl]
 
 
-# TemperatureAbstraction --
+# ValueAbstraction --
 
-inherit TemperatureAbstraction Abstraction
-
-method TemperatureAbstraction constructor {control value} {
+inherit ValueAbstraction Abstraction
+method ValueAbstraction constructor {control value} {
    this inherited $control
    set this(value) $value
    trace add variable this(value) write "$objName change"
 }
 
-method TemperatureAbstraction change {args} {
+method ValueAbstraction change {args} {
    $this(control) change
 }
 
-method TemperatureAbstraction edit {value} {
+method ValueAbstraction edit {value} {
    set this(value) $value
    $this(control) change
+   puts $value
 }
 
-# TemperaturePresentation --
+# ValuePresentation --
 
-inherit TemperaturePresentation Presentation
-method TemperaturePresentation constructor {control label_name unit_name} {
+inherit ValuePresentation Presentation
+method ValuePresentation constructor {control label_name unit_name} {
    this inherited $control
 
-   set this(window) [toplevel .${objName}]
+   set this(window) [toplevel .$objName]
    wm protocol $this(window) WM_DELETE_WINDOW "$this(control) dispose"
-
-   set this(entry) [entry $this(window).entry -justify right]
    set this(label) [label $this(window).label -text $label_name -justify center]
+
+   set this(unit_layout) [frame $this(window).frame]
+   set this(entry) [entry $this(window).entry -justify center]
    set this(unit) [label $this(window).unit -text $unit_name -justify center]
+
    pack $this(label) -expand 1 -fill both
    pack $this(entry) $this(unit) -side left -padx 4
+
 
 
    bind $this(entry) <Return> "$objName edit"
 }
 
-method TemperaturePresentation change {value} {
+method ValuePresentation change {value} {
    $this(entry) delete 0 end
    $this(entry) insert 0 $value
 }
 
-method TemperaturePresentation edit {} {
-   set newTemperatureControl [$this(entry) get]
+method ValuePresentation edit {} {
+   set newvalue [$this(entry) get]
    $this(control) edit $newvalue
 }
 
-method TemperaturePresentation destructor {} {
+method ValuePresentation destructor {} {
    destroy $this(window)
 }
 
 
 
-# TemperatureControl --
+# ValueControl --
 
-inherit TemperatureControl Control
-method TemperatureControl constructor {parent value label unit} {
-   TemperatureAbstraction ${objName}_abst $objName $value
-   TemperaturePresentation ${objName}_pres $objName $label $unit
+inherit ValueControl Control
+method ValueControl constructor {parent value label unit} {
+   ValueAbstraction ${objName}_abst $objName $value
+   ValuePresentation ${objName}_pres $objName $label $unit
    this inherited $parent ${objName}_abst ${objName}_pres
 
    this change
 }
 
-method TemperatureControl edit {newvalue} {
+method ValueControl edit {newvalue} {
    $this(abstraction) edit $newvalue
 }
 
-method TemperatureControl change {} {
+method ValueControl change {} {
    $this(presentation) change [$this(abstraction) attribute value]
 }
 
-method TemperatureControl destructor {} {
+method ValueControl destructor {} {
    this inherited
 }
 
-TemperatureControl value "" 10 Température "°C"
+ValueControl value "" 10 Température "°C"
