@@ -22,6 +22,7 @@ method ValueAbstraction change {args} {
 method ValueAbstraction edit {value} {
    set this(value) $value
    $this(control) change
+   puts $value
 }
 
 # ValuePresentation --
@@ -52,7 +53,7 @@ method ValuePresentation change {value} {
 }
 
 method ValuePresentation edit {} {
-   set newValueControl [$this(entry) get]
+   set newvalue [$this(entry) get]
    $this(control) edit $newvalue
 }
 
