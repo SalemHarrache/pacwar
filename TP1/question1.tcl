@@ -6,7 +6,7 @@ exec wish "$0" "$@"
 source [file join [file dirname [info script]] .. lib init.tcl]
 
 
-# ValueAbstraction --
+# TemperatureAbstraction --
 
 inherit TemperatureAbstraction Abstraction
 method TemperatureAbstraction constructor {control value} {
@@ -25,7 +25,7 @@ method TemperatureAbstraction edit {value} {
    puts "$value K"
 }
 
-# ValuePresentation --
+# TemperaturePresentation --
 
 inherit TemperaturePresentation Presentation
 method TemperaturePresentation constructor {control label_name unit_name} {
@@ -65,8 +65,7 @@ method TemperaturePresentation destructor {} {
    destroy $this(window)
 }
 
-# ValueControl --
-
+# TemperatureControl --
 
 inherit TemperatureControl Control
 method TemperatureControl constructor {value} {
@@ -115,12 +114,9 @@ method TemperatureControlKelvin destructor {} {
    this inherited
 }
 
-
 # main --
 if {[is_main]} {
    # executed only if the file is the main script
    TemperatureControl agent_central 10
    TemperatureControlKelvin agent_temp_k agent_central Température "K"
-   TemperatureControlKelvin agent_temp_c agent_central Température "C"
 }
-
