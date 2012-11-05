@@ -30,15 +30,17 @@ inherit ValuePresentation Presentation
 method ValuePresentation constructor {control label_name unit_name} {
    this inherited $control
 
-   set this(window) [toplevel .${objName}]
+   set this(window) .
    wm protocol $this(window) WM_DELETE_WINDOW "$this(control) dispose"
-
-   set this(entry) [entry $this(window).entry -justify right]
    set this(label) [label $this(window).label -text $label_name -justify center]
+
+   set this(unit_layout) [frame $this(window).frame]
+   set this(entry) [entry $this(window).entry -justify center]
    set this(unit) [label $this(window).unit -text $unit_name -justify center]
+
    pack $this(label) -expand 1 -fill both
-   pack $this(entry)
-   pack $this(unit)
+   pack $this(entry) $this(unit) -side left -padx 4
+
 
 
    bind $this(entry) <Return> "$objName edit"
