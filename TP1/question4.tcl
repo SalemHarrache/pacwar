@@ -35,7 +35,8 @@ method FormuleAbstraction edit {varname newvalue} {
 inherit FormuleControl Control
 method FormuleControl constructor {} {
    FormuleAbstraction ${objName}_abst $objName
-   this inherited "" ${objName}_abst
+   FormulePresentation ${objName}_pres $objName
+   this inherited "" ${objName}_abst ${objName}_pres
 
    this change
 }
@@ -58,43 +59,60 @@ method FormuleControl destructor {} {
    this inherited
 }
 
+# FormulePresentation --
+inherit FormulePresentation Presentation
+method FormulePresentation constructor {control} {
+    this inherited $control
+    set this(frames) {}
+    set this(window) .
+    # wm protocol $this(window) WM_DELETE_WINDOW "$this(control) dispose;"
+    # pack $this(window)
+}
+
+method FormulePresentation display {} {
+    foreach frame $this(frames) {
+        pack
+    }
+}
+
+method FormulePresentation get_new_frame {} {
+    set new_frame [frame $this(window).frame_[llength $this(frames)]]
+    lappend this(frames) $new_frame
+    return $new_frame
+}
+
+
 # UnitPresentation --
 
 inherit UnitPresentation Presentation
-method UnitPresentation constructor {control label_name unit_name} {
+method UnitPresentation constructor {control label_name unit_name frame} {
    this inherited $control
 
-   set this(window) [toplevel .$objName]
-   wm protocol $this(window) WM_DELETE_WINDOW "$this(control) dispose; destroy $this(window)"
-   set this(label) [label $this(window).label -text $label_name -justify center]
-
-   set this(entry) [entry $this(window).entry -justify center]
-   set this(unit) [label $this(window).unit -text $unit_name -justify center]
-
-   wm minsize $this(window) 200 50
-   wm maxsize $this(window) 200 50
-   wm positionfrom $this(window) user
-   wm sizefrom $this(window) user
-   #Titre de la fenêtre
-   wm title $this(window) "$label_name en $unit_name"
-
-   pack $this(label) -expand 1 -fill both
-   pack $this(entry) $this(unit) -side left -padx 4
+   set this(frame) [[[$this(control) attribute parent] attribute presentation] get_new_frame]
+   label $this(frame).label -text $label_name -justify center
+   set this(entry) [entry $this(frame).entry -justify center]
+   set this(unit) [label $this(frame).unit -text $unit_name -justify center]
 
    bind $this(entry) <Return> "$objName edit"
 }
 
+method UnitPresentation pack {} {
+    pack $this(label) -expand 1 -fill both
+    pack $this(entry) $this(unit) -side left -padx 4
+}
+
 method UnitPresentation change {value} {
-   $this(entry) delete 0 end
-   $this(entry) insert 0 $value
+
+   # $this(entry) delete 0 end
+   # $this(entry) insert 0 $value
 }
 
 method UnitPresentation edit {} {
-   $this(control) edit [$this(entry) get]
+   # $this(control) edit [$this(entry) get]
 }
 
 method UnitPresentation destructor {} {
-   destroy $this(window)
+   # destroy $this(window)
 }
 
 
@@ -121,8 +139,9 @@ method TemperatureControlCelsius destructor {} {
 # Controleur Pression
 inherit PressureControl Control
 method PressureControl constructor {parent} {
-   UnitPresentation ${objName}_pres $objName "Pression" "Bar"
    this inherited $parent "" ${objName}_pres
+   set frame [[$this(parent) attribute presentation] get_new_frame]
+   UnitPresentation ${objName}_pres $objName "Pression" "Bar" $frame
    this change
 }
 
@@ -164,7 +183,7 @@ if {[is_main]} {
    # executed only if the file is the main script
    FormuleControl agent_central
 
-   TemperatureControlCelsius agent_temp_c agent_central
+   # TemperatureControlCelsius agent_temp_c agent_central
    PressureControl agent_press agent_central
-   VolumeControl agent_volume agent_central
+   # VolumeControl agent_volume agent_central
 }
