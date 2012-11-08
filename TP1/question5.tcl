@@ -150,11 +150,11 @@ method TemperatureControlCelsius constructor {parent} {
 }
 
 method TemperatureControlCelsius edit {newvalue} {
-   $this(parent) edit temperature [expr $newvalue - 0]
+   $this(parent) edit temperature [expr $newvalue - 273.15]
 }
 
 method TemperatureControlCelsius change {} {
-   $this(presentation) change [expr  [$this(parent) get "temperature"] + 0]
+   $this(presentation) change [expr  [$this(parent) get "temperature"] + 273.15]
 }
 
 method TemperatureControlCelsius get_new_frame {} {
