@@ -17,10 +17,12 @@ method TemperatureControlCelsius constructor {parent label unit} {
 }
 
 method TemperatureControlCelsius edit {newvalue} {
+   # On convertit en Kelvin avant de repercuter les changement vers l'abstraction
    $this(parent) edit [this celsius_to_kelvin $newvalue]
 }
 
 method TemperatureControlCelsius change {} {
+   # On convertit en °C avant d'afficher 
    $this(presentation) change [this kelvin_to_celsius [$this(parent) get]]
 }
 
