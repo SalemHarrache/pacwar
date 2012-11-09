@@ -7,19 +7,12 @@ source [file join [file dirname [info script]] .. lib init.tcl]
 source [file join [file dirname [info script]] . PVNRT.tcl]
 
 # Formule Abstraction
-# Permet de stocker les 3 types de données : temperature, volume et pressure 
+# Permet de stocker les 3 types de données : temperature, volume et pressure
 # tout en les gardant coherentes
 inherit FormuleAbstraction Abstraction
 method FormuleAbstraction constructor {control} {
    this inherited $control
    lassign [PVNRT::equi 1 1 1] this(pressure) this(volume) this(temperature)
-   trace add variable this(pressure) write "$objName change"
-   trace add variable this(volume) write "$objName change"
-   trace add variable this(temperature) write "$objName change"
-}
-
-method FormuleAbstraction change {args} {
-   $this(control) change
 }
 
 method FormuleAbstraction edit {varname newvalue} {
@@ -30,6 +23,7 @@ method FormuleAbstraction edit {varname newvalue} {
     } elseif {$varname == "pressure"} {
         lassign [PVNRT::equi $newvalue $this(volume) $this(temperature) isobare] this(pressure) this(volume) this(temperature)
     }
+    $this(control) change
 }
 
 
