@@ -1,4 +1,9 @@
-source gml_Object.tcl
+#!/bin/sh
+# restart using tclsh \
+exec wish "$0" "$@"
+
+# load utilities
+source [file join [file dirname [info script]] .. lib init.tcl]
 source SWL_FC.tcl
 
 SWL_FC S
