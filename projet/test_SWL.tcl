@@ -1,9 +1,4 @@
-#!/bin/sh
-# restart using tclsh \
-exec wish "$0" "$@"
-
-# load utilities
-source [file join [file dirname [info script]] .. lib init.tcl]
+source gml_Object.tcl
 source SWL_FC.tcl
 
 SWL_FC S
@@ -65,6 +60,6 @@ set id_S4 [S Add_new_ship $id_P2 500 300 10]; S Update_ship $id_P2 $id_S4 [dict 
 set id_p1 [S Add_new_planet 400 400 30 10]
 set id_p2 [S Add_new_planet 400 300 20 5 ]
 
-# Introspact introspact S
+
 puts "S Start_fire"
 

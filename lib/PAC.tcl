@@ -1,85 +1,132 @@
-###############################################################################
-# file    : PAC.tcl
-# content : basic gmlObject implementation of PAC model
-# history : 2007-Oct-18 - [rb] inital version
-# todo    : - remove abstraction, presentation, children from constructor args
-#           - automatic forward of unknown methods to parent
-###############################################################################
-
-
+#___________________________________________________________________________________________________________________________________________
 # PAC --
 #
 #   PAC class implementation
-#
+#___________________________________________________________________________________________________________________________________________
 
+#___________________________________________________________________________________________________________________________________________
 # object extension
 set gmlObjectPath [file join [file dirname [info script]]]
 if {[catch {load [file join $gmlObjectPath libgmlobject.so]}]} {
-    source [file join $gmlObjectPath gml_Object.tcl]
+	source [file join $gmlObjectPath gml_Object.tcl]
 }
 
+#___________________________________________________________________________________________________________________________________________
+# Object --
+#
+#   define some standard methods
+#
+#___________________________________________________________________________________________________________________________________________
+method Object constructor  {}    {}
+method Object setAttribute {a v} {set this($a) $v}
+method Object getAttribute {a  } {return $this($a)}
 
+
+#___________________________________________________________________________________________________________________________________________
 # Control --
 #
 #   control facet for PAC architecture
 #
-
-method Control constructor {{parent ""}
-                            {abstraction ""}
-                            {presentation ""}
+#___________________________________________________________________________________________________________________________________________
+inherit Control Object
+method Control constructor {{parent ""} 
+                            {abstraction ""} 
+                            {presentation ""} 
                             {children {}}} {
-    set this(parent) $parent
-    set this(abstraction) $abstraction
-    set this(presentation) $presentation
-    set this(children) $children
-
-    if {$this(parent) != ""} {
-        $this(parent) append $objName
-    }
+    this inherited
+	set this(L_subscriptions) [list ]
+	set this(parent) $parent
+	set this(abstraction) $abstraction
+	set this(presentation) $presentation
+	set this(children) [list]
+	
+	foreach c $children {this append $c}
+	
+	if {$this(parent) != ""} {
+		$this(parent) append $objName
+	}
 }
 
-method Control destructor {} {
-    if {$this(parent) != ""} {
-        $this(parent) remove $objName
-    }
+#___________________________________________________________________________________________________________________________________________
+method Control dispose {} {
+	if {$this(parent) != ""} {
+		$this(parent) remove $objName
+	}
 
-    foreach child $this(children) {
-        $child dispose
-    }
-
-    foreach facet {presentation abstraction} {
-        if {$this($facet) != ""} {
-            $this($facet) dispose
-            set this($facet) ""
-        }
-    }
+	foreach child $this(children) {
+		$child dispose
+	}
+	
+	foreach facet {presentation abstraction} {
+		if {$this($facet) != ""} {
+			$this($facet) dispose
+			set this($facet) ""
+		}
+	}
+	
+	this inherited
 }
 
+#___________________________________________________________________________________________________________________________________________
 method Control append {child} {
-    lappend this(children) $child
+	lappend this(children) $child
+	$child setAttribute parent $objName
 }
 
+#___________________________________________________________________________________________________________________________________________
 method Control remove {child} {
-    set child_index [lsearch $this(children) $child]
-    set this(children) [lreplace $this(children) $child_index $child_index]
+	set this(children) [lremove $this(children) $child]
 }
 
+#___________________________________________________________________________________________________________________________________________
+# id : an identifyer for the subscription, allow to redifine the command associated to a subscription.
+# re : regular expression that has to be matched to trigger the CallBack (CB).
+# CB : CallBack to be triggered when the regular expression (re) is matched.
+#___________________________________________________________________________________________________________________________________________
+method Control Subscribe {id re CB} {
+	set pos 0
+	foreach s $this(L_subscriptions) {
+	  if {[lindex $s 0] == $id} {set this(L_subscriptions) [lreplace $this(L_subscriptions) $pos $pos]; break}
+	  incr pos
+	 }
+	lappend this(L_subscriptions) [list $id $re $CB]
+}
 
+#___________________________________________________________________________________________________________________________________________
+# Test if a message is recognize by the Control. If yes, the related CallBack is triggered.
+# In any case, the message is propagated to the parent Control.
+#___________________________________________________________________________________________________________________________________________
+method Control Propagate {owner msg} {
+	if {$owner == ""} {set owner $objName}
+	foreach s $this(L_subscriptions) {
+	  if {[regexp [lindex $s 1] $msg]} {eval [lindex $s 2]}
+	 }
+	if {$this(parent) != ""} {
+	  $this(parent) Propagate $owner $msg
+	 }
+}
+
+#___________________________________________________________________________________________________________________________________________
 # Abstraction --
 #
 #   abstraction facet for PAC architecture
 #
-
+#___________________________________________________________________________________________________________________________________________
+inherit Abstraction Object
 method Abstraction constructor {control} {
-    set this(control) $control
+	this inherited
+	set this(control) $control
 }
 
 
+#___________________________________________________________________________________________________________________________________________
 # Presentation --
 #
 #   presentation facet for PAC architecture
 #
-
+#___________________________________________________________________________________________________________________________________________
+inherit Presentation Object
 method Presentation constructor {control} {
-    set this(control) $control
+	this inherited
+	set this(control) $control
 }

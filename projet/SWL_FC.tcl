@@ -1,49 +1,49 @@
-#____________________________________________________________________________
-#____________________________________________________________________________
+#___________________________________________________________________________________________________________________________________________
+#___________________________________________________________________________________________________________________________________________
 # Functionnal core of StarWarLight
 # 	A planet is a dictionnary with entries: x, y, radius, density
 #	A player is a dictionnary with entries: name, D_ships
 #	D_ships  is a dictionnary of ships
 # 	A ship   is a dictionnary with entries: x, y, radius, energy, fire_velocity, fire_angle (expressed in radians)
-#____________________________________________________________________________
-#____________________________________________________________________________
+#___________________________________________________________________________________________________________________________________________
+#___________________________________________________________________________________________________________________________________________
 method SWL_FC constructor {} {
 	set this(uid) 0
 	set this(dt)  0.05
 	set this(simulation_step) 10
-
+	
 	this reset
 }
 
-#____________________________________________________________________________
+#___________________________________________________________________________________________________________________________________________
 method SWL_FC generate_uid {prefix} {
 	incr this(uid)
 	return ${prefix}_$this(uid)
 }
 
-#____________________________________________________________________________
+#___________________________________________________________________________________________________________________________________________
 method SWL_FC reset {} {
 	set this(D_planets) [dict create]
 	set this(D_players) [dict create]
 	set this(L_bullets) [list]
-
+	
 	set this(interupt_simulation) 0
 }
 
-#____________________________________________________________________________
+#___________________________________________________________________________________________________________________________________________
 method SWL_FC get_dt { } {return $this(dt)}
 method SWL_FC set_dt {v} {set this(dt) $v}
 
-#____________________________________________________________________________
+#___________________________________________________________________________________________________________________________________________
 method SWL_FC get_simulation_step { } {return $this(simulation_step)}
 method SWL_FC set_simulation_step {v} {set this(simulation_step) $v}
 
-#____________________________________________________________________________
+#___________________________________________________________________________________________________________________________________________
 method SWL_FC Stop_simulation {} {set this(interupt_simulation) 1}
 
-#____________________________________________________________________________
-#________ Simulation ________________________________________________________
-#____________________________________________________________________________
+#___________________________________________________________________________________________________________________________________________
+#___________________________________________________________________ Simulation ____________________________________________________________
+#___________________________________________________________________________________________________________________________________________
 method SWL_FC Start_fire {} {
 	set this(interupt_simulation) 0
 	# Initialize bullets
@@ -59,12 +59,12 @@ method SWL_FC Start_fire {} {
 			 lappend this(L_bullets) Bullet_$id_ship $x $y $vx $vy
 			}
 		}
-
+	
 	# Start simulation loop
 	this Compute_a_simulation_step
 }
 
-#____________________________________________________________________________
+#___________________________________________________________________________________________________________________________________________
 method SWL_FC Collision_with_planets {x y} {
 	 dict for {id_planet D_planet} $this(D_planets) {
 		 # Collision with this planet?
@@ -75,11 +75,11 @@ method SWL_FC Collision_with_planets {x y} {
 			 return 1
 			}
 		}
-
+			
 	return 0
 }
 
-#____________________________________________________________________________
+#___________________________________________________________________________________________________________________________________________
 method SWL_FC Collision_with_ships {x y} {
 	 dict for {id_player D_player} $this(D_players) {
 		 dict for {id_ship D_ship} [dict get $D_player D_ships] {
@@ -97,7 +97,7 @@ method SWL_FC Collision_with_ships {x y} {
 	return 0
 }
 
-#____________________________________________________________________________
+#___________________________________________________________________________________________________________________________________________
 method SWL_FC Compute_acceleration_at {x y} {
 	set ax 0; set ay 0
 	dict for {id_planet D_planet} $this(D_planets) {
@@ -110,11 +110,11 @@ method SWL_FC Compute_acceleration_at {x y} {
 		 set ax [expr $ax + $DX * $M / ($D * $distance)]
 		 set ay [expr $ay + $DY * $M / ($D * $distance)]
 		}
-
+		
 	return [list $ax $ay]
 }
 
-#____________________________________________________________________________
+#___________________________________________________________________________________________________________________________________________
 method SWL_FC Compute_a_simulation_step {} {
 	# Compute bullets moves
 	set new_L_bullets [list]
@@ -133,16 +133,16 @@ method SWL_FC Compute_a_simulation_step {} {
 		 lappend new_L_bullets $id $x $y $vx $vy
 		}
 	set this(L_bullets) $new_L_bullets
-
+	
 	# Prepare a new step if needed
 	if {[llength $this(L_bullets)] > 0 && !$this(interupt_simulation)} {
 		 after $this(simulation_step) [list $objName Compute_a_simulation_step]
 		}
 }
 
-#____________________________________________________________________________
-#_______Planets _____________________________________________________________
-#____________________________________________________________________________
+#___________________________________________________________________________________________________________________________________________
+#___________________________________________________________________ Planets _______________________________________________________________
+#___________________________________________________________________________________________________________________________________________
 method SWL_FC Add_new_planet {x y radius density} {
 	set id [this generate_uid "Planet"]
 	dict set this(D_planets) $id ""
@@ -150,13 +150,13 @@ method SWL_FC Add_new_planet {x y radius density} {
 	return $id
 }
 
-#____________________________________________________________________________
+#___________________________________________________________________________________________________________________________________________
 method SWL_FC Destroy_planet {id} {
 	if {![dict exists $this(D_planets) $id]} {error "There is no planet identified by $id\nPlanets are: $this(D_planets)"}
 	dict unset $this(D_planets) $id
 }
 
-#____________________________________________________________________________
+#___________________________________________________________________________________________________________________________________________
 method SWL_FC Update_planet {id D_update} {
 	if {![dict exists $this(D_planets) $id]} {error "There is no planet identified by $id\nPlanets are: $this(D_planets)"}
 	dict for {k v} $D_update {dict set this(D_planets) $id $k $v}
@@ -165,30 +165,30 @@ method SWL_FC Update_planet {id D_update} {
 	dict set this(D_planets) $id mass [expr $R * $R * 3.1415 * $D]
 }
 
-#____________________________________________________________________________
-#_______ Players ____________________________________________________________
-#____________________________________________________________________________
+#___________________________________________________________________________________________________________________________________________
+#__________________________________________________________________ Players ________________________________________________________________
+#___________________________________________________________________________________________________________________________________________
 method SWL_FC Add_new_player {name} {
 	set id [this generate_uid "Player"]
 	dict set this(D_players) $id [dict create name $name D_ships [dict create]]
 	return $id
 }
 
-#____________________________________________________________________________
+#___________________________________________________________________________________________________________________________________________
 method SWL_FC Destroy_player {id} {
 	if {![dict exists $this(D_players) $id]} {error "There is no player identified by $id\nPlayers are: $this(D_players)"}
 	dict unset this(D_players) $id
 }
 
-#____________________________________________________________________________
+#___________________________________________________________________________________________________________________________________________
 method SWL_FC Update_player {id D_update} {
 	if {![dict exists $this(D_players) $id]} {error "There is no player identified by $id\nPlayers are: $this(D_players)"}
 	dict for {k v} $D_update {dict set this(D_players) $id $k $v}
 }
 
-#____________________________________________________________________________
-#_____ Ships__ ______________________________________________________________
-#____________________________________________________________________________
+#___________________________________________________________________________________________________________________________________________
+#__________________________________________________________________ Ships__ ________________________________________________________________
+#___________________________________________________________________________________________________________________________________________
 method SWL_FC Add_new_ship {id_player x y radius} {
 	if {![dict exists $this(D_players) $id_player]} {error "There is no player identified by $id_player\nPlayers are: $this(D_players)"}
 	set id [this generate_uid "${id_player}_Ship"]
@@ -196,14 +196,14 @@ method SWL_FC Add_new_ship {id_player x y radius} {
 	return $id
 }
 
-#____________________________________________________________________________
+#___________________________________________________________________________________________________________________________________________
 method SWL_FC Destroy_ship {id_player id} {
 	if {![dict exists $this(D_players) $id_player]} {error "There is no player identified by $id_player\nPlayers are: $this(D_players)"}
 	if {![dict exists $this(D_players) $id_player D_ships $id]} {error "There is no ship identified by $id for player $id_player\nHis ships are: [dict get $this(D_players) $id_player D_ships]"}
 	dict unset this(D_players) $id_player D_ships $id
 }
 
-#____________________________________________________________________________
+#___________________________________________________________________________________________________________________________________________
 method SWL_FC Update_ship {id_player id D_update} {
 	if {![dict exists $this(D_players) $id_player]} {error "There is no player identified by $id_player\nPlayers are: $this(D_players)"}
 	if {![dict exists $this(D_players) $id_player D_ships $id]} {error "There is no ship identified by $id for player $id_player\nHis ships are: [dict get $this(D_players) $id_player D_ships]"}
@@ -211,14 +211,14 @@ method SWL_FC Update_ship {id_player id D_update} {
 }
 
 
-#____________________________________________________________________________
-#______ Subscribers _________________________________________________________
-#____________________________________________________________________________
+#___________________________________________________________________________________________________________________________________________
+#_______________________________________________________________ Subscribers _______________________________________________________________
+#___________________________________________________________________________________________________________________________________________
 proc Generate_SWL_FC_subscriber {C L_methods} {
 	foreach M $L_methods {
 		 # Rename the original method
 		 method $C Original_$M [gmlObject info arglist $C $M] [gmlObject info body $C $M]
-
+		 
 		 # Redefine the method so that Callbacks are called
 		 set ARGS [list]; foreach a [gmlObject info args $C $M] {append ARGS " \$[lindex $a 0]"}
 		 method $C $M [gmlObject info arglist $C $M] "
@@ -227,11 +227,11 @@ proc Generate_SWL_FC_subscriber {C L_methods} {
 			 dict for {key_of_the_CB_$M value_of_the_CB_$M} \$this(D_CB_after_$M)  {eval \$value_of_the_CB_$M}
 			 return \$rep
 			"
-
+			
 		 # Generate Subscribers methods
 		 method $C Subscribe_before_$M {id CB} "dict set this(D_CB_before_$M) \$id \$CB"
 		 method $C Subscribe_after_$M  {id CB} "dict set this(D_CB_after_$M)  \$id \$CB"
-
+		 
 		 # Add to the constructor Callback list attribute
 		 method $C constructor [gmlObject info arglist $C constructor] "\tset this(D_CB_before_$M) \[dict create\]; set this(D_CB_after_$M) \[dict create\]\n[gmlObject info body $C constructor]"
 		}
