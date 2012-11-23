@@ -2,7 +2,7 @@
 source [file join [file dirname [info script]] .. lib init.tcl]
 
 
-proc Generate_PAC_accessors {C A P var} {
+proc generate_pac_accessors {C A P var} {
   set cmd ""
 
   # Generates accessors for the control facet $C
@@ -25,5 +25,46 @@ proc Generate_PAC_accessors {C A P var} {
   }
 
   # Evaluation of the command
+  eval $cmd
+}
+
+# Cette fonction genère les classes PAC pour un agent donné
+proc generate_pac_agent {agent} {
+  set cmd ""
+  append cmd "
+  inherit ${agent}Abstraction Abstraction
+  inherit ${agent}Control Control
+  inherit ${agent}Presentation Presentation
+
+  # ${agent}Abstraction --
+  method ${agent}Abstraction constructor {control} {
+    this inherited \$control
+  }
+
+  method ${agent}Abstraction destructor {} {
+    this inherited
+  }
+
+  # ${agent}Presentation --
+  method ${agent}Presentation constructor {control canvas} {
+    this inherited \$control
+    set this(canvas) \$canvas
+  }
+
+  method ${agent}Presentation destructor {} {
+    this inherited
+  }
+
+  # ${agent} Control --
+  method ${agent}Control constructor {{parent \"\"} {canvas \"\"}} {
+    ${agent}Presentation \${objName}_pres \$objName \$canvas
+    ${agent}Abstraction \${objName}_abst \$objName
+    this inherited \$parent \${objName}_abst \${objName}_pres
+  }
+
+  method ${agent}Control destructor {} {
+    this inherited
+  }"
+  # puts $cmd
   eval $cmd
 }
