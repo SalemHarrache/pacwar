@@ -4,6 +4,7 @@ exec wish "$0" "$@"
 
 # load utilities
 source [file join [file dirname [info script]] .. lib init.tcl]
+source pac_generator.tcl
 source SWL_FC.tcl
 
 SWL_FC S
@@ -20,8 +21,16 @@ proc Help {C exp} {
 }
 
 
-S Subscribe_after_Add_new_planet ALEX {.c delete $rep; .c create oval [expr $x - $radius] [expr $y - $radius] [expr $x + $radius] [expr $y + $radius] -fill green -tags [list ALEX $rep]}
-S Subscribe_after_Destroy_planet ALEX {puts "Destroy planet $id"; .c delete $id}
+S Subscribe_after_Add_new_planet ALEX {
+	.c delete $rep
+	.c create oval [expr $x - $radius] [expr $y - $radius] [expr $x + $radius] [expr $y + $radius] -fill green -tags [list ALEX $rep]
+	}
+
+S Subscribe_after_Destroy_planet ALEX {
+	puts "Destroy planet $id";
+	.c delete $id
+}
+
 S Subscribe_after_Update_planet  ALEX {
 	set x [dict get $this(D_planets) $id x]
 	set y [dict get $this(D_planets) $id y]
@@ -30,8 +39,16 @@ S Subscribe_after_Update_planet  ALEX {
 }
 
 
-S Subscribe_after_Add_new_ship ALEX {.c delete $rep; .c create oval [expr $x - $radius] [expr $y - $radius] [expr $x + $radius] [expr $y + $radius] -fill red -tags [list ALEX $rep]}
-S Subscribe_after_Destroy_ship ALEX {puts "Destroy ship $id"; .c delete $id}
+S Subscribe_after_Add_new_ship ALEX {
+	.c delete $rep
+	.c create oval [expr $x - $radius] [expr $y - $radius] [expr $x + $radius] [expr $y + $radius] -fill red -tags [list ALEX $rep]
+}
+
+S Subscribe_after_Destroy_ship ALEX {
+	puts "Destroy ship $id"
+	.c delete $id
+}
+
 S Subscribe_after_Update_ship  ALEX {
 	set x [dict get $this(D_players) $id_player D_ships $id x]
 	set y [dict get $this(D_players) $id_player D_ships $id y]
@@ -40,7 +57,7 @@ S Subscribe_after_Update_ship  ALEX {
 }
 
 
-S Subscribe_after_Start_fire                ALEX {
+S Subscribe_after_Start_fire ALEX {
 	.c delete Bullet
 	set radius 2
 	foreach {id x y vx vy} $this(L_bullets) {
