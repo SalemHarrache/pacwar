@@ -85,3 +85,27 @@ set id_p2 [S Add_new_planet 400 300 20 5 ]
 
 puts "S Start_fire"
 
+generate_pac_agent "Game"
+generate_pac_agent "Panel"
+generate_pac_agent "Player"
+generate_pac_agent "Universe"
+generate_pac_agent "Planet"
+generate_pac_agent "Ship"
+generate_pac_agent "Map"
+generate_pac_agent "MiniMap"
+
+GameControl game
+
+PanelControl panel game .c
+PlayerControl player_1 panel .c
+PlayerControl player_2 panel .c
+
+UniverseControl universe game .c
+MapControl map universe .c
+MapControl mini_map universe .c
+
+PlanetControl planet_1 universe .c
+PlanetControl planet_2 universe .c
+
+ShipControl ship_1 universe .c
+ShipControl ship_2 universe .c
