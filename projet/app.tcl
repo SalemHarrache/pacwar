@@ -92,10 +92,22 @@ generate_pac_agent_multi_view "Universe" [list "Map" "MiniMap"]
 generate_pac_agent_multi_view "Planet" [list "Map" "MiniMap" "Panel"]
 generate_pac_agent_multi_view "Ship" [list "Map" "MiniMap" "Panel"]
 
-generate_pac_accessors Game var1
+
+generate_pac_presentation_accessors Game frame_map
+generate_pac_presentation_accessors Game frame_mini_map
+generate_pac_presentation_accessors Game frame_panel
 
 
-GameControl game
+method GameControl init {} {
+    this set_frame_map [frame .frame_map]
+    this set_frame_map [frame .frame_mini_map]
+    this set_frame_map [frame .frame_panel]
+}
+
+
+
+GameControl game "" .
+
 
 PanelControl panel game .
 PlayerControl player_1 panel .
