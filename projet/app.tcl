@@ -99,9 +99,22 @@ generate_pac_presentation_accessors Game frame_panel
 
 
 method GameControl init {} {
-    this set_frame_map [frame .frame_map]
-    this set_frame_map [frame .frame_mini_map]
-    this set_frame_map [frame .frame_panel]
+
+}
+
+method GamePresentation constructor {control tk_parent} {
+    this inherited $control
+    set this(tk_parent) $tk_parent
+    this set_frame_map [frame ${tk_parent}.frame_map -height 10 -width 20]
+    this set_frame_map [frame ${tk_parent}.frame_mini_map]
+    this set_frame_map [frame ${tk_parent}.frame_panel]
+
+    label $this(frame_map).label -text "Lizabethththhtthht" -justify center -bg red
+    pack configure $this(frame_map).label -expand 1 -fill both
+    pack configure $this(frame_map) -expand 1 -side left
+
+    wm minsize $this(tk_parent) 800 500
+
 }
 
 
