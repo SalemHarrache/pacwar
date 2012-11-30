@@ -153,6 +153,7 @@ proc generate_pac_agent_without_abstraction {agent} {
   method ${agent}Control constructor {{parent \"\"} {canvas \"\"}} {
     ${agent}Presentation \${objName}_pres \$objName \$canvas
     this inherited \$parent \"\" \${objName}_pres
+
   }
 
   method ${agent}Control destructor {} {
@@ -231,5 +232,23 @@ proc generate_pac_accessors {agent var {propagate 1}} {
     append cmd "method ${agent}Abstraction get_$var { } {return \$this($var)}\n"
   }
   # Evaluation of the command
+  eval $cmd
+}
+
+proc generate_pac_presentation_accessors {agent var} {
+  set cmd ""
+
+  # Generates accessors for the control facet $C
+  if {[is_defined "${agent}Control"]} {
+    append cmd "method ${agent}Control get_$var { } {return \[\$this(presentation) get_$var\]}\n"
+    append cmd "method ${agent}Control set_$var {v} {\$this(presentation) set_$var \$v}\n"
+  }
+  # Generates accessors for the presentation facet $P
+  if {[is_defined "${agent}Presentation"]} {
+    append cmd "method ${agent}Presentation set_$var {v} {set this($var) \$v}\n"
+    append cmd "method ${agent}Presentation get_$var { } {return \$this($var)}\n"
+  }
+  # Evaluation of the command
+  puts $cmd
   eval $cmd
 }
