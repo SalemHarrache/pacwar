@@ -4,7 +4,7 @@ exec wish "$0" "$@"
 
 # load utilities
 source [file join [file dirname [info script]] .. lib init.tcl]
-source pac_generator.tcl
+# source pac_generator.tcl
 source SWL_FC.tcl
 
 SWL_FC S
@@ -88,32 +88,23 @@ puts "S Start_fire"
 generate_pac_agent "Game"
 generate_pac_agent "Panel"
 generate_pac_agent "Player"
-generate_pac_agent "Universe"
-generate_pac_agent "Planet"
-generate_pac_agent "Ship"
-generate_pac_agent "Map"
-generate_pac_agent "MiniMap"
+generate_pac_agent_multi_view "Universe" [list "Map" "MiniMap"]
+generate_pac_agent_multi_view "Planet" [list "Map" "MiniMap" "Panel"]
+generate_pac_agent_multi_view "Ship" [list "Map" "MiniMap" "Panel"]
 
 generate_pac_accessors Game var1
-generate_pac_accessors Game var2
-generate_pac_accessors Game var3
-generate_pac_accessors Game var4
 
 
 GameControl game
 
-
-
 PanelControl panel game .
-# PlayerControl player_1 panel .
-# PlayerControl player_2 panel .
+PlayerControl player_1 panel .
+PlayerControl player_2 panel .
 
-# UniverseControl universe game .
-# MapControl map universe .
-# MapControl mini_map universe .
+UniverseControl universe game .
 
-# PlanetControl planet_1 universe .
-# PlanetControl planet_2 universe .
+PlanetControl planet_1 universe .
 
-# ShipControl ship_1 universe .
-# ShipControl ship_2 universe .
+ShipControl ship_1 universe .
+
+puts $universe(children)

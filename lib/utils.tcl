@@ -6,8 +6,8 @@
 #
 
 proc is_main {} {
-	global argv0
-	return [string equal [info script] $argv0]
+  global argv0
+  return [string equal [info script] $argv0]
 }
 
 proc is_defined {procname} {
@@ -15,12 +15,12 @@ proc is_defined {procname} {
 }
 
 
-#___________________________________________________________________________________________________________________________________________
+#______________________________________________________________________________
 # assert --
 #
 #   check the result of an expression
 #
-#___________________________________________________________________________________________________________________________________________
+#______________________________________________________________________________
 proc assert {expression {expected_result 1} {verbose 1}} {
 	set result [eval $expression]
 	set assert_ok [expr {$result == $expected_result}]
@@ -133,10 +133,77 @@ proc generate_pac_agent {agent} {
   eval $cmd
 }
 
-# Cette fonction genère les classes PAC pour un agent donné
-proc generate_pac_agent_multi_view {agent nbview} {
+proc generate_pac_agent_without_abstraction {agent} {
   set cmd ""
-  # puts $cmd
+  append cmd "
+  inherit ${agent}Control Control
+  inherit ${agent}Presentation Presentation
+
+  # ${agent}Presentation --
+  method ${agent}Presentation constructor {control canvas} {
+    this inherited \$control
+    set this(canvas) \$canvas
+  }
+
+  method ${agent}Presentation destructor {} {
+    this inherited
+  }
+
+  # ${agent} Control --
+  method ${agent}Control constructor {{parent \"\"} {canvas \"\"}} {
+    ${agent}Presentation \${objName}_pres \$objName \$canvas
+    this inherited \$parent \"\" \${objName}_pres
+  }
+
+  method ${agent}Control destructor {} {
+    this inherited
+  }"
+  eval $cmd
+}
+
+# Cette fonction genère les classes PAC pour un agent donné
+proc generate_pac_agent_multi_view {agent views} {
+  foreach name $views {
+      generate_pac_agent_without_abstraction ${name}${agent}
+  }
+  set cmd ""
+  append cmd "
+  inherit ${agent}Abstraction Abstraction
+  inherit ${agent}Control Control
+  inherit ${agent}Presentation Presentation
+
+  # ${agent}Abstraction --
+  method ${agent}Abstraction constructor {control} {
+    this inherited \$control
+  }
+
+  method ${agent}Abstraction destructor {} {
+    this inherited
+  }
+
+  # ${agent}Presentation --
+  method ${agent}Presentation constructor {control canvas} {
+    this inherited \$control
+    set this(canvas) \$canvas
+  }
+
+  method ${agent}Presentation destructor {} {
+    this inherited
+  }
+
+  # ${agent} Control --
+  method ${agent}Control constructor {{parent \"\"} {tk_parent \"\"}} {
+    ${agent}Presentation \${objName}_pres \$objName \$tk_parent
+    ${agent}Abstraction \${objName}_abst \$objName
+    this inherited \$parent \${objName}_abst \${objName}_pres
+    foreach name \[\list ${views}\] {
+        \${name}${agent}Control \${name}_\${objName} \$objName \$tk_parent
+    }
+  }
+
+  method ${agent}Control destructor {} {
+    this inherited
+  }"
   eval $cmd
 }
 
