@@ -110,9 +110,9 @@ proc generate_pac_agent {agent} {
   }
 
   # ${agent}Presentation --
-  method ${agent}Presentation constructor {control canvas} {
+  method ${agent}Presentation constructor {control tk_parent} {
     this inherited \$control
-    set this(canvas) \$canvas
+    set this(tk_parent) \$tk_parent
   }
 
   method ${agent}Presentation destructor {} {
@@ -120,8 +120,8 @@ proc generate_pac_agent {agent} {
   }
 
   # ${agent} Control --
-  method ${agent}Control constructor {{parent \"\"} {canvas \"\"}} {
-    ${agent}Presentation \${objName}_pres \$objName \$canvas
+  method ${agent}Control constructor {{parent \"\"} {tk_parent \"\"}} {
+    ${agent}Presentation \${objName}_pres \$objName \$tk_parent
     ${agent}Abstraction \${objName}_abst \$objName
     this inherited \$parent \${objName}_abst \${objName}_pres
   }
@@ -140,9 +140,9 @@ proc generate_pac_agent_without_abstraction {agent} {
   inherit ${agent}Presentation Presentation
 
   # ${agent}Presentation --
-  method ${agent}Presentation constructor {control canvas} {
+  method ${agent}Presentation constructor {control tk_parent} {
     this inherited \$control
-    set this(canvas) \$canvas
+    set this(tk_parent) \$tk_parent
   }
 
   method ${agent}Presentation destructor {} {
@@ -150,8 +150,8 @@ proc generate_pac_agent_without_abstraction {agent} {
   }
 
   # ${agent} Control --
-  method ${agent}Control constructor {{parent \"\"} {canvas \"\"}} {
-    ${agent}Presentation \${objName}_pres \$objName \$canvas
+  method ${agent}Control constructor {{parent \"\"} {tk_parent \"\"}} {
+    ${agent}Presentation \${objName}_pres \$objName \$tk_parent
     this inherited \$parent \"\" \${objName}_pres
 
   }
@@ -183,9 +183,9 @@ proc generate_pac_agent_multi_view {agent views} {
   }
 
   # ${agent}Presentation --
-  method ${agent}Presentation constructor {control canvas} {
+  method ${agent}Presentation constructor {control tk_parent} {
     this inherited \$control
-    set this(canvas) \$canvas
+    set this(tk_parent) \$tk_parent
   }
 
   method ${agent}Presentation destructor {} {
