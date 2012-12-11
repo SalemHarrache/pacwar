@@ -3,9 +3,7 @@
 exec wish "$0" "$@"
 
 # load utilities
-source [file join [file dirname [info script]] .. lib init.tcl]
-# source pac_generator.tcl
-source SWL_FC.tcl
+source [file join [file dirname [info script]] . lib init.tcl]
 
 SWL_FC S
 
@@ -98,10 +96,10 @@ generate_pac_presentation_accessors Game frame_mini_map
 generate_pac_presentation_accessors Game frame_panel
 
 
-method GameControl init {} {
-    this set_frame_map [frame ${tk_parent}.frame_map -height 10 -width 20]
-    this set_frame_map [frame ${tk_parent}.frame_mini_map]
-    this set_frame_map [frame ${tk_parent}.frame_panel]
+method GamePresentation init {} {
+    this set_frame_map [frame $this(tk_parent).frame_map -height 10 -width 20]
+    this set_frame_map [frame $this(tk_parent).frame_mini_map]
+    this set_frame_map [frame $this(tk_parent).frame_panel]
 
     label $this(frame_map).label -text "Lizabethththhtthht" -justify center -bg red
     pack configure $this(frame_map).label -expand 1 -fill both
