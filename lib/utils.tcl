@@ -101,8 +101,11 @@ proc generate_pac_agent {agent} {
   inherit ${agent}Presentation Presentation
 
   # ${agent}Abstraction --
+  method ${agent}Abstraction init {} {}
+
   method ${agent}Abstraction constructor {control} {
     this inherited \$control
+    this init
   }
 
   method ${agent}Abstraction destructor {} {
@@ -110,9 +113,12 @@ proc generate_pac_agent {agent} {
   }
 
   # ${agent}Presentation --
+  method ${agent}Presentation init {} {}
+
   method ${agent}Presentation constructor {control tk_parent} {
     this inherited \$control
     set this(tk_parent) \$tk_parent
+    this init
   }
 
   method ${agent}Presentation destructor {} {
@@ -120,10 +126,13 @@ proc generate_pac_agent {agent} {
   }
 
   # ${agent} Control --
+  method ${agent}Control init {} {}
+
   method ${agent}Control constructor {{parent \"\"} {tk_parent \"\"}} {
     ${agent}Presentation \${objName}_pres \$objName \$tk_parent
     ${agent}Abstraction \${objName}_abst \$objName
     this inherited \$parent \${objName}_abst \${objName}_pres
+    this init
   }
 
   method ${agent}Control destructor {} {
@@ -140,9 +149,12 @@ proc generate_pac_agent_without_abstraction {agent} {
   inherit ${agent}Presentation Presentation
 
   # ${agent}Presentation --
+  method ${agent}Presentation init {} {}
+
   method ${agent}Presentation constructor {control tk_parent} {
     this inherited \$control
     set this(tk_parent) \$tk_parent
+    this init
   }
 
   method ${agent}Presentation destructor {} {
@@ -150,10 +162,12 @@ proc generate_pac_agent_without_abstraction {agent} {
   }
 
   # ${agent} Control --
+  method ${agent}Control init {} {}
+
   method ${agent}Control constructor {{parent \"\"} {tk_parent \"\"}} {
     ${agent}Presentation \${objName}_pres \$objName \$tk_parent
     this inherited \$parent \"\" \${objName}_pres
-
+    this init
   }
 
   method ${agent}Control destructor {} {
@@ -174,8 +188,11 @@ proc generate_pac_agent_multi_view {agent views} {
   inherit ${agent}Presentation Presentation
 
   # ${agent}Abstraction --
+  method ${agent}Abstraction init {} {}
+
   method ${agent}Abstraction constructor {control} {
     this inherited \$control
+    this init
   }
 
   method ${agent}Abstraction destructor {} {
@@ -183,9 +200,12 @@ proc generate_pac_agent_multi_view {agent views} {
   }
 
   # ${agent}Presentation --
+  method ${agent}Presentation init {} {}
+
   method ${agent}Presentation constructor {control tk_parent} {
     this inherited \$control
     set this(tk_parent) \$tk_parent
+    this init
   }
 
   method ${agent}Presentation destructor {} {
@@ -193,6 +213,8 @@ proc generate_pac_agent_multi_view {agent views} {
   }
 
   # ${agent} Control --
+  method ${agent}Control init {} {}
+
   method ${agent}Control constructor {{parent \"\"} {tk_parent \"\"}} {
     ${agent}Presentation \${objName}_pres \$objName \$tk_parent
     ${agent}Abstraction \${objName}_abst \$objName
@@ -200,6 +222,7 @@ proc generate_pac_agent_multi_view {agent views} {
     foreach name \[\list ${views}\] {
         \${name}${agent}Control \${name}_\${objName} \$objName \$tk_parent
     }
+    this init
   }
 
   method ${agent}Control destructor {} {

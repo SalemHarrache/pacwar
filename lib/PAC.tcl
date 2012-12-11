@@ -45,10 +45,9 @@ method Control constructor {{parent ""}
     if {$this(parent) != ""} {
         $this(parent) append $objName
     }
-    this init
 }
 
-method Control init {} {}
+
 
 #___________________________________________________________________________________________________________________________________________
 method Control dispose {} {
