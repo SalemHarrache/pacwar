@@ -6,10 +6,10 @@ Pour lancer le jeu :
 
 :
 
-  ./run.sh
+  ./app.tcl
 
-pour lancer le jeu avec introspact: 
+pour lancer le jeu avec introspact:
 
 :
 
-  ./run.sh introspac
+  ./app.tcl introspac
