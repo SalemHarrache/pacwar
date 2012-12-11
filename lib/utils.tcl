@@ -173,6 +173,7 @@ proc generate_pac_agent_without_abstraction {agent} {
   method ${agent}Control destructor {} {
     this inherited
   }"
+  # puts $cmd
   eval $cmd
 }
 
@@ -228,6 +229,7 @@ proc generate_pac_agent_multi_view {agent views} {
   method ${agent}Control destructor {} {
     this inherited
   }"
+  # puts $cmd
   eval $cmd
 }
 
@@ -255,6 +257,7 @@ proc generate_pac_accessors {agent var {propagate 1}} {
     append cmd "method ${agent}Abstraction get_$var { } {return \$this($var)}\n"
   }
   # Evaluation of the command
+  # puts $cmd
   eval $cmd
 }
 
@@ -272,6 +275,6 @@ proc generate_pac_presentation_accessors {agent var} {
     append cmd "method ${agent}Presentation get_$var { } {return \$this($var)}\n"
   }
   # Evaluation of the command
-  puts $cmd
+  # puts $cmd
   eval $cmd
 }
