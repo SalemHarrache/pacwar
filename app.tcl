@@ -1,6 +1,8 @@
 #!/bin/sh
 # restart using tclsh \
-exec ./lib/tkcon.tcl -load Tk "$0" "$@"
+# exec wish ./lib/tkcon.tcl -load Tk "$0" "$@" \
+exec wish "$0" "$@"
+
 
 # load utilities
 source [file join [file dirname [info script]] . lib init.tcl]
@@ -111,7 +113,7 @@ method GamePresentation init {} {
 
 
 proc run {} {
-    global argv
+    global argc
     GameControl game "" .
 
     PanelControl panel game .
@@ -123,7 +125,7 @@ proc run {} {
     PlanetControl planet_1 universe .
 
     ShipControl ship_1 universe .
-    if {[lindex $argv 0] == "introspact"} {
+    if {$argc > 0} {
         Introspact introspact game
     }
 }
