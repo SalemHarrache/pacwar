@@ -2,9 +2,22 @@ PACWar
 ======
 
 
-Pour lancer le jeu :
+Dépendances
+-----------
 
-:
+Ubuntu :
+
+::
+
+    sudo apt-get install libtk-img
+
+
+Usage
+-----
+
+Pour lancer le jeu utiliser le script main app.tcl
+
+::
 
   ./app.tcl
 
