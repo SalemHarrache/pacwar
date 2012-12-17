@@ -1,4 +1,6 @@
 source [file join [file dirname [info script]] . lib init.tcl]
+set ressources_dir [file join [file dirname [info script]] ressources \
+                    universe]
 
 generate_pac_agent "Game"
 
