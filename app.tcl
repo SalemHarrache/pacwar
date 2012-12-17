@@ -33,7 +33,6 @@ proc run {} {
     if {$argc > 0} {
         Introspact introspact game
     }
-
 }
 
 run

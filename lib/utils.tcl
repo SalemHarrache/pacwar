@@ -85,94 +85,71 @@ proc Add_propagation {c m} {
 }
 
 
-#______________________________________________________________________________
-# Manage_variable_consistency --
-#
-#   Create methods to handle consistency between facets of a PAC agent for a
-#   certain variable
-#
-#______________________________________________________________________________
-# Cette fonction genère les classes PAC pour un agent donné
-proc generate_pac_agent {agent} {
+# Cette fonction génère les classes PAC pour un agent donné
+proc generate_pac_agent {agent {abstraction 1} {presentation 1} {control 1}} {
   set cmd ""
-  append cmd "
-  inherit ${agent}Abstraction Abstraction
-  inherit ${agent}Control Control
-  inherit ${agent}Presentation Presentation
+  if {$abstraction == 1} {
+      append cmd "
+      # ${agent}Abstraction --
+      inherit ${agent}Abstraction Abstraction
 
-  # ${agent}Abstraction --
-  method ${agent}Abstraction init {} {}
+      method ${agent}Abstraction init {} {}
 
-  method ${agent}Abstraction constructor {control} {
-    this inherited \$control
-    this init
+      method ${agent}Abstraction constructor {control} {
+        this inherited \$control
+        this init
+      }
+      method ${agent}Abstraction destructor {} {
+        this inherited
+      }"
   }
+  if {$presentation == 1} {
+      append cmd "
+      inherit ${agent}Presentation Presentation
 
-  method ${agent}Abstraction destructor {} {
-    this inherited
+      # ${agent}Presentation --
+      method ${agent}Presentation init {} {}
+
+      method ${agent}Presentation constructor {control tk_parent} {
+        this inherited \$control
+        set this(tk_parent) \$tk_parent
+        this init
+      }
+
+      method ${agent}Presentation destructor {} {
+        this inherited
+      }"
   }
+  if {$control == 1} {
+      append cmd "
+      inherit ${agent}Control Control
 
-  # ${agent}Presentation --
-  method ${agent}Presentation init {} {}
+      # ${agent} Control --
+      method ${agent}Control init {} {}
 
-  method ${agent}Presentation constructor {control tk_parent} {
-    this inherited \$control
-    set this(tk_parent) \$tk_parent
-    this init
+      method ${agent}Control constructor {{parent \"\"} {tk_parent \"\"}} {
+        set pres \"\"
+        set abst \"\"
+      "
+      if {$abstraction == 1} {
+        append cmd "
+        set abst \[${agent}Abstraction \${objName}_abst \$objName\]
+        "
+      }
+      if {$presentation == 1} {
+        append cmd "
+        set pres \[${agent}Presentation \${objName}_pres \$objName \$tk_parent\]
+        "
+      }
+      append cmd "
+        this inherited \$parent \$abst \$pres
+        this init
+      }
+
+      method ${agent}Control destructor {} {
+        this inherited
+      }"
   }
-
-  method ${agent}Presentation destructor {} {
-    this inherited
-  }
-
-  # ${agent} Control --
-  method ${agent}Control init {} {}
-
-  method ${agent}Control constructor {{parent \"\"} {tk_parent \"\"}} {
-    ${agent}Presentation \${objName}_pres \$objName \$tk_parent
-    ${agent}Abstraction \${objName}_abst \$objName
-    this inherited \$parent \${objName}_abst \${objName}_pres
-    this init
-  }
-
-  method ${agent}Control destructor {} {
-    this inherited
-  }"
-  # puts $cmd
-  eval $cmd
-}
-
-proc generate_pac_agent_without_abstraction {agent} {
-  set cmd ""
-  append cmd "
-  inherit ${agent}Control Control
-  inherit ${agent}Presentation Presentation
-
-  # ${agent}Presentation --
-  method ${agent}Presentation init {} {}
-
-  method ${agent}Presentation constructor {control tk_parent} {
-    this inherited \$control
-    set this(tk_parent) \$tk_parent
-    this init
-  }
-
-  method ${agent}Presentation destructor {} {
-    this inherited
-  }
-
-  # ${agent} Control --
-  method ${agent}Control init {} {}
-
-  method ${agent}Control constructor {{parent \"\"} {tk_parent \"\"}} {
-    ${agent}Presentation \${objName}_pres \$objName \$tk_parent
-    this inherited \$parent \"\" \${objName}_pres
-    this init
-  }
-
-  method ${agent}Control destructor {} {
-    this inherited
-  }"
   # puts $cmd
   eval $cmd
 }
@@ -180,54 +157,19 @@ proc generate_pac_agent_without_abstraction {agent} {
 # Cette fonction genère les classes PAC pour un agent donné
 proc generate_pac_agent_multi_view {agent views} {
   foreach name $views {
-      generate_pac_agent_without_abstraction ${name}${agent}
+      # generate pac agent without abstraction
+      generate_pac_agent ${name}${agent} 0 1 1
   }
+  generate_pac_agent ${agent} 1 0 1
   set cmd ""
   append cmd "
-  inherit ${agent}Abstraction Abstraction
-  inherit ${agent}Control Control
-  inherit ${agent}Presentation Presentation
-
-  # ${agent}Abstraction --
-  method ${agent}Abstraction init {} {}
-
-  method ${agent}Abstraction constructor {control} {
-    this inherited \$control
-    this init
-  }
-
-  method ${agent}Abstraction destructor {} {
-    this inherited
-  }
-
-  # ${agent}Presentation --
-  method ${agent}Presentation init {} {}
-
-  method ${agent}Presentation constructor {control tk_parent} {
-    this inherited \$control
-    set this(tk_parent) \$tk_parent
-    this init
-  }
-
-  method ${agent}Presentation destructor {} {
-    this inherited
-  }
-
-  # ${agent} Control --
-  method ${agent}Control init {} {}
-
   method ${agent}Control constructor {{parent \"\"} {tk_parent \"\"}} {
-    ${agent}Presentation \${objName}_pres \$objName \$tk_parent
     ${agent}Abstraction \${objName}_abst \$objName
-    this inherited \$parent \${objName}_abst \${objName}_pres
+    this inherited \$parent \${objName}_abst \"\"
     foreach name \[\list ${views}\] {
         \${name}${agent}Control \${name}_\${objName} \$objName \$tk_parent
     }
     this init
-  }
-
-  method ${agent}Control destructor {} {
-    this inherited
   }"
   # puts $cmd
   eval $cmd
@@ -235,13 +177,17 @@ proc generate_pac_agent_multi_view {agent views} {
 
 
 proc generate_pac_accessors {agent var {propagate 1}} {
+
   set cmd ""
+
 
   # Generates accessors for the control facet $C
   if {[is_defined "${agent}Control"]} {
     append cmd "method ${agent}Control user_change_$var {v} {if {\$this(abstraction) != \"\"} {\$this(abstraction) set_$var \$v}}\n"
     append cmd "method ${agent}Control system_change_$var {v} {\$this(presentation) set_$var \$v}\n"
+    if {[is_defined "${agent}Abstraction"]} {
     append cmd "method ${agent}Control get_$var { } {if {\$this(abstraction) != \"\"} {return \[\$this(abstraction) get_$var\]} else {return \$this($var)}}\n"
+    }
     if {$propagate} {append cmd "Add_propagation ${agent}Control system_change_$var\n"}
   }
   # Generates accessors for the presentation facet $P
@@ -256,6 +202,7 @@ proc generate_pac_accessors {agent var {propagate 1}} {
     append cmd "method ${agent}Abstraction set_$var {v} {set this($var) \$v; this change_$var \$v}\n"
     append cmd "method ${agent}Abstraction get_$var { } {return \$this($var)}\n"
   }
+
   # Evaluation of the command
   # puts $cmd
   eval $cmd
@@ -276,5 +223,26 @@ proc generate_pac_presentation_accessors {agent var} {
   }
   # Evaluation of the command
   # puts $cmd
+  eval $cmd
+}
+
+
+proc generate_pac_parent_accessors {agent var} {
+  set cmd ""
+  append cmd "
+  method ${agent}Control get_parent_$var { }  {
+    #return \[\$this(parent) get_$var\]
+    set parent_value_exist \[catch {set value \[\$this(parent) get_$var\]}\]
+    if { \$parent_value_exist != 0 } {
+      # Try get_parent_$var
+      set sub_parent_value_exist \[catch {set value \[\$this(parent) get_parent_$var\]}\]
+      if { \$sub_parent_value_exist != 0 } {
+          puts \"\\nERROR: Inexistant value : $var!!!\"
+          exit 1
+      }
+    }
+    return \$value
+  }
+  "
   eval $cmd
 }
