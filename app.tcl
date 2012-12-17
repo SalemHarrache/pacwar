@@ -4,8 +4,11 @@
 exec wish "$0" "$@"
 
 package require Img
+package require Tk
 
 # load utilities
+set ressources_dir [file join [file dirname [info script]] ressources]
+
 source [file join [file dirname [info script]] . lib init.tcl]
 source [file join [file dirname [info script]] . game.tcl]
 source [file join [file dirname [info script]] . panel.tcl]
