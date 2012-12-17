@@ -5,6 +5,11 @@
 #   check if the calling script was executed on the command line or sourced
 #
 
+proc lremove {liste quoi} {
+    return [lsearch -all -inline -not -exact $liste $quoi]
+}
+
+
 proc is_main {} {
   global argv0
   return [string equal [info script] $argv0]
@@ -97,7 +102,6 @@ proc generate_pac_agent {agent {abstraction 1} {presentation 1} {control 1}} {
 
       method ${agent}Abstraction constructor {control} {
         this inherited \$control
-        this init
       }
       method ${agent}Abstraction destructor {} {
         this inherited
@@ -113,7 +117,6 @@ proc generate_pac_agent {agent {abstraction 1} {presentation 1} {control 1}} {
       method ${agent}Presentation constructor {control tk_parent} {
         this inherited \$control
         set this(tk_parent) \$tk_parent
-        this init
       }
 
       method ${agent}Presentation destructor {} {
@@ -144,8 +147,19 @@ proc generate_pac_agent {agent {abstraction 1} {presentation 1} {control 1}} {
       append cmd "
         this inherited \$parent \$abst \$pres
         this init
+      "
+      if {$abstraction == 1} {
+        append cmd "
+        \$abst init
+        "
       }
-
+      if {$presentation == 1} {
+        append cmd "
+        \$pres init
+        "
+      }
+      append cmd "
+      }
       method ${agent}Control destructor {} {
         this inherited
       }"
