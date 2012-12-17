@@ -13,7 +13,17 @@ generate_pac_parent_accessors MiniMapUniverse canvas_mini_map
 generate_pac_presentation_accessors MapUniverse canvas_map
 generate_pac_presentation_accessors MiniMapUniverse canvas_mini_map
 
+proc drag.canvas.item {canWin item newX newY} {
+    set xDiff [expr {$newX - $::x}]
+    set yDiff [expr {$newY - $::y}]
 
+    set ::x $newX
+    set ::y $newY
+
+    puts $xDiff
+    puts $yDiff
+    $canWin move $item $xDiff $yDiff
+}
 
 method MapUniversePresentation init {} {
     global ressources_dir
@@ -23,6 +33,32 @@ method MapUniversePresentation init {} {
     set background_file [file join $ressources_dir universe background.png]
     set background [image create photo -file $background_file]
     $this(canvas_map) create image 0 0 -anchor nw -image $background
+
+
+    $this(canvas_map) create oval 80 80 140 140 \
+        -fill yellow \
+        -tag mobile
+
+    set cmd "
+    $this(canvas_map) create oval 80 80 140 140 -fill yellow -tag mobile"
+
+    append cmd "
+    $this(canvas_map) bind mobile <Button-1> {
+        set selected \[$this(canvas_map) find closest %x %y\]
+        set atx %x
+        set aty %y
+    }"
+
+    append cmd "
+    $this(canvas_map) bind mobile <B1-Motion> {
+        set changed_x \[expr %x - \$atx\]
+        set changed_y \[expr %y - \$aty\]
+        $this(canvas_map) move \$selected \$changed_x \$changed_y
+        set atx %x
+        set aty %y
+    }"
+    eval $cmd
+
 }
 
 
@@ -34,4 +70,5 @@ method MiniMapUniversePresentation init {} {
     set background_file [file join $ressources_dir universe background_mini.jpg]
     set background [image create photo -file $background_file]
     $this(canvas_mini_map) create image 0 0 -anchor nw -image $background
+
 }
