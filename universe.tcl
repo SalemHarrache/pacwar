@@ -35,14 +35,15 @@ method MapUniversePresentation init {} {
     $this(canvas_map) create image 0 0 -anchor nw -image $background
 
 
-    $this(canvas_map) create oval 80 80 140 140 \
-        -fill yellow \
-        -tag mobile
+    set background_planet [image create photo -file [get_random_planet_bg]]
+    set background_planet_2 [image create photo -file [get_random_ship_bg]]
+
+    $this(canvas_map) create image 0 0 -anchor nw -image $background_planet -tag mobile
+
+    $this(canvas_map) create image 0 0 -anchor nw -image $background_planet_2 -tag mobile
+
 
     set cmd "
-    $this(canvas_map) create oval 80 80 140 140 -fill yellow -tag mobile"
-
-    append cmd "
     $this(canvas_map) bind mobile <Button-1> {
         set selected \[$this(canvas_map) find closest %x %y\]
         set atx %x
