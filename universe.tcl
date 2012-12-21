@@ -11,36 +11,26 @@ generate_pac_parent_accessors MapUniverse canvas_map
 generate_pac_parent_accessors MiniMapUniverse canvas_mini_map
 # Generation des accesseurs pour les attributs
 generate_pac_presentation_accessors MapUniverse canvas_map
+generate_pac_presentation_accessors MapUniverse num_background
 generate_pac_presentation_accessors MiniMapUniverse canvas_mini_map
 
-proc drag.canvas.item {canWin item newX newY} {
-    set xDiff [expr {$newX - $::x}]
-    set yDiff [expr {$newY - $::y}]
 
-    set ::x $newX
-    set ::y $newY
-
-    puts $xDiff
-    puts $yDiff
-    $canWin move $item $xDiff $yDiff
-}
 
 method MapUniversePresentation init {} {
     global ressources_dir
+    this set_num_background 0
     this set_canvas_map [$this(control) get_parent_canvas_map]
     $this(canvas_map) configure -width 400 -height 200 -background "#191919"
 
-    set background_file [file join $ressources_dir universe background.png]
-    set background [image create photo -file $background_file]
-    $this(canvas_map) create image 0 0 -anchor nw -image $background
+    initBackground $this(canvas_map) [get_new_universe_bg]
 
+    $this(canvas_map) create image 0 0 -anchor nw -image [get_random_planet_bg] -tag mobile
 
-    set background_planet [image create photo -file [get_random_planet_bg]]
-    set background_planet_2 [image create photo -file [get_random_ship_bg]]
+    $this(canvas_map) create image 0 0 -anchor nw -image [get_random_planet_bg] -tag mobile
 
-    $this(canvas_map) create image 0 0 -anchor nw -image $background_planet -tag mobile
+    $this(canvas_map) create image 0 0 -anchor nw -image [get_random_ship_bg] -tag mobile
 
-    $this(canvas_map) create image 0 0 -anchor nw -image $background_planet_2 -tag mobile
+    $this(canvas_map) create image 0 0 -anchor nw -image [get_random_ship_bg] -tag mobile
 
 
     set cmd "
@@ -60,8 +50,15 @@ method MapUniversePresentation init {} {
     }"
     eval $cmd
 
+    bind $this(tk_parent) <Control-Key-b> "$objName switch_background"
+
 }
 
+
+method MapUniversePresentation switch_background {} {
+    incr this(num_background)
+    initBackground $this(canvas_map) [get_new_universe_bg $this(num_background)]
+}
 
 method MiniMapUniversePresentation init {} {
     global ressources_dir
