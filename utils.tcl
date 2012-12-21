@@ -26,16 +26,40 @@ proc is_defined {procname} {
 # Images
 proc get_random_planet_bg {} {
   global ressources_dir
-  return [file join $ressources_dir planet "planet[random 12].png"]
+  set path [file join $ressources_dir planet "planet[random 12].png"]
+  return [image create photo -file $path]
 }
 
 proc get_random_ship_bg {} {
   global ressources_dir
-  return [file join $ressources_dir ship "ship[random 4].png"]
+  set path [file join $ressources_dir ship "ship[random 4].png"]
+  return [image create photo -file $path]
 }
 
+proc get_new_universe_bg {{num 0}} {
+  global ressources_dir
+  set path [file join $ressources_dir universe "universe[expr $num % 3].jpg"]
+  return [image create photo -file $path]
+}
 
-
+proc initBackground {canvas sourceImage} {
+    set tiledImage [image create photo]
+    $canvas create image 0 0  -anchor nw  -image $tiledImage  -tags {backgroundBitmap}
+    $canvas lower backgroundBitmap
+    if {0} {
+        proc {tile} {canvas sourceImage tiledImage} {
+            $tiledImage copy $sourceImage  -to 0 0 [winfo width $canvas] [winfo height $canvas]
+        }
+        bind $canvas <Configure> [list tile $canvas $sourceImage $tiledImage]
+        bind $canvas <Destroy> [list image delete $sourceImage $tiledImage]
+        tile $canvas $sourceImage $tiledImage
+    } else {
+        # avoid needing a tile proc
+        bind $canvas <Configure> "$tiledImage copy $sourceImage  -to 0 0 \[winfo width $canvas\] \[winfo height $canvas\]"
+        bind $canvas <Destroy> [list image delete $sourceImage $tiledImage]
+        $tiledImage copy $sourceImage  -to 0 0 [winfo width $canvas] [winfo height $canvas]
+    }
+}
 
 #______________________________________________________________________________
 # Add_aspect --
