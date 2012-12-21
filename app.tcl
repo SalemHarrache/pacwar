@@ -41,26 +41,3 @@ proc run {} {
 }
 
 run
-
-# pack [canvas .c]
-# bind .c <ButtonPress-1>   {oval_create %W %x %y}
-# bind .c <B1-Motion>       {oval_move %W %x %y}
-# bind .c <ButtonRelease-1> {oval_end %W %x %y}
-# proc oval_create {win x y} {
-#     global oval
-#     set oval(x0) $x
-#     set oval(y0) $y
-#     set oval(id) \
-#          [$win create oval $x $y $x $y]
-# }
-
-# proc oval_move {win x y} {
-#     global oval
-#     $win coords $oval(id) \
-#           $oval(x0) $oval(y0) $x $y
-# }
-# proc oval_end {win x y} {
-#     global oval
-#     oval_move $win $x $y
-#     $win itemconfigure $oval(id) -fill lightblue
-# }
