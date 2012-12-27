@@ -1,24 +1,25 @@
 #!/bin/sh
 # restart using tclsh \
 # exec wish ./lib/tkcon.tcl -load Tk "$0" "$@" \
-exec wish "$0" "$@"
+exec tclsh "$0" "$@"
 
 package require Img
 package require Tk
 
 # load utilities
-source [file join [file dirname [info script]] . utils.tcl]
-source [file join [file dirname [info script]] . lib gml_Object.tcl]
-source [file join [file dirname [info script]] . lib PAC.tcl]
-source [file join [file dirname [info script]] . lib introspact.tcl]
-source [file join [file dirname [info script]] . lib SWL_FC.tcl]
-source [file join [file dirname [info script]] . game.tcl]
-source [file join [file dirname [info script]] . panel.tcl]
-source [file join [file dirname [info script]] . planet.tcl]
-source [file join [file dirname [info script]] . player.tcl]
-source [file join [file dirname [info script]] . ship.tcl]
-source [file join [file dirname [info script]] . universe.tcl]
+source [file normalize [file join . utils.tcl]]
 
+source [abspath lib gml_Object.tcl]
+source [abspath lib PAC.tcl]
+source [abspath lib introspact.tcl]
+source [abspath lib SWL_FC.tcl]
+source [abspath game.tcl]
+source [abspath sound.tcl]
+source [abspath panel.tcl]
+source [abspath planet.tcl]
+source [abspath player.tcl]
+source [abspath ship.tcl]
+source [abspath universe.tcl]
 
 proc run {} {
     global argc
