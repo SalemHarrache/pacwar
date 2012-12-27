@@ -4,7 +4,17 @@
 #
 #   check if the calling script was executed on the command line or sourced
 #
-set ressources_dir [file join [file dirname [info script]] ressources]
+
+proc abspath {arg args} {
+    set cmd "return \[file normalize \[file join $arg $args]]"
+    eval $cmd
+}
+
+# # Sound
+load [abspath lib snack libsnack.so]
+load [abspath lib snack libsound.so]
+load [abspath lib snack libsnackogg.so]
+source [abspath lib snack snack.tcl]
 
 proc lremove {liste quoi} {
     return [lsearch -all -inline -not -exact $liste $quoi]
@@ -23,24 +33,27 @@ proc is_defined {procname} {
   return [lsearch [info procs] $procname]
 }
 
+proc loop_sound sound {
+    set cmd "$sound play -command {loop_sound $sound}"
+    eval $cmd
+}
+
 # Images
 proc get_random_planet_bg {} {
-  global ressources_dir
-  set path [file join $ressources_dir planet "planet[random 12].png"]
+  set path [abspath ressources planet "planet[random 12].png"]
   return [image create photo -file $path]
 }
 
-proc get_random_ship_bg {} {
-  global ressources_dir
-  set path [file join $ressources_dir ship "ship[random 4].png"]
+proc get_ship_bg {name} {
+  set path [abspath ressources ship "$name.png"]
   return [image create photo -file $path]
 }
 
 proc get_new_universe_bg {{num 0}} {
-  global ressources_dir
-  set path [file join $ressources_dir universe "universe[expr $num % 3].jpg"]
+  set path [abspath ressources universe "universe[expr $num % 3].jpg"]
   return [image create photo -file $path]
 }
+
 
 proc initBackground {canvas sourceImage} {
     set tiledImage [image create photo]
@@ -217,7 +230,11 @@ proc generate_pac_accessors {agent var {propagate 1}} {
   # Generates accessors for the control facet $C
   if {[is_defined "${agent}Control"]} {
     append cmd "method ${agent}Control user_change_$var {v} {if {\$this(abstraction) != \"\"} {\$this(abstraction) set_$var \$v}}\n"
-    append cmd "method ${agent}Control system_change_$var {v} {\$this(presentation) set_$var \$v}\n"
+    append cmd "method ${agent}Control system_change_$var {v} {
+                  if {\$this(presentation) != \"\"} {
+                      \$this(presentation) set_$var \$v
+                  }
+                }\n"
     if {[is_defined "${agent}Abstraction"]} {
     append cmd "method ${agent}Control get_$var { } {if {\$this(abstraction) != \"\"} {return \[\$this(abstraction) get_$var\]} else {return \$this($var)}}\n"
     }
@@ -277,5 +294,14 @@ proc generate_pac_parent_accessors {agent var} {
     return \$value
   }
   "
+  eval $cmd
+}
+
+
+proc generate_simple_accessors {class var} {
+  if {[is_defined "${class}"]} {
+    append cmd "method ${class} get_$var { } {return \$this($var)}\n"
+    append cmd "method ${class} set_$var {v} {set this($var) \$v}\n"
+  }
   eval $cmd
 }
