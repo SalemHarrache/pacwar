@@ -15,9 +15,7 @@ generate_pac_presentation_accessors MapUniverse num_background
 generate_pac_presentation_accessors MiniMapUniverse canvas_mini_map
 
 
-
 method MapUniversePresentation init {} {
-    global ressources_dir
     this set_num_background 0
     this set_canvas_map [$this(control) get_parent_canvas_map]
     $this(canvas_map) configure -width 400 -height 200 -background "#191919"
@@ -28,10 +26,8 @@ method MapUniversePresentation init {} {
 
     $this(canvas_map) create image 0 0 -anchor nw -image [get_random_planet_bg] -tag mobile
 
-    $this(canvas_map) create image 0 0 -anchor nw -image [get_random_ship_bg] -tag mobile
-
-    $this(canvas_map) create image 0 0 -anchor nw -image [get_random_ship_bg] -tag mobile
-
+    this add_ship "feisar"
+    this add_ship "goteki"
 
     set cmd "
     $this(canvas_map) bind mobile <Button-1> {
@@ -54,6 +50,9 @@ method MapUniversePresentation init {} {
 
 }
 
+method MapUniversePresentation add_ship {name} {
+    return [$this(canvas_map) create image 0 0 -anchor nw -image [get_ship_bg $name] -tag mobile]
+}
 
 method MapUniversePresentation switch_background {} {
     incr this(num_background)
@@ -61,11 +60,10 @@ method MapUniversePresentation switch_background {} {
 }
 
 method MiniMapUniversePresentation init {} {
-    global ressources_dir
     this set_canvas_mini_map [$this(control) get_parent_canvas_mini_map]
     $this(canvas_mini_map) configure -width 200 -height 200 -background "#1E1E1E"
 
-    set background_file [file join $ressources_dir universe background_mini.jpg]
+    set background_file [abspath ressources universe background_mini.jpg]
     set background [image create photo -file $background_file]
     $this(canvas_mini_map) create image 0 0 -anchor nw -image $background
 
