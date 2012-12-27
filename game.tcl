@@ -10,8 +10,10 @@ generate_pac_presentation_accessors Game frame_panel
 generate_pac_presentation_accessors Game frame_wrapper
 # Sert a afficher la mini map
 generate_pac_presentation_accessors Game display_mode
-
-
+# Pour gerer l'activation ou pas de la musique dans le jeu
+generate_pac_presentation_accessors Game mute
+# Pour gerer le son depuis Game
+generate_simple_accessors GameControl sfx_manager
 
 
 
@@ -28,6 +30,7 @@ method GamePresentation init {} {
     this set_canvas_mini_map [canvas $this(frame_wrapper).canvas_mini_map]
     this set_frame_panel [frame $this(frame_wrapper).frame_panel]
 
+
     pack $this(canvas_map) -expand 1 -side right -fill both
     pack $this(frame_wrapper) -side left -fill both
     pack $this(frame_panel) -expand 1 -fill both
@@ -36,6 +39,10 @@ method GamePresentation init {} {
     bind $this(tk_parent) <Control-Key-p> "$objName switch_view_mode; $objName refresh"
     wm minsize $this(tk_parent) 0 0
     wm maxsize $this(tk_parent) 0 0
+}
+
+method GamePresentation sound_changed {v} {
+    puts "volume : $v"
 }
 
 method GamePresentation switch_view_mode {} {
@@ -59,8 +66,20 @@ method GamePresentation refresh {} {
         pack configure $this(canvas_mini_map) -fill both
         pack configure $this(canvas_map)  -expand 1 -side right -fill both
     }
+}
+
+method GameControl init {} {
+    this set_sfx_manager [SoundControl sfx_manager $objName ""]
+    bind . <Control-Key-s> "$objName toggle_sound"
+}
+
+method GameControl toggle_sound {} {
+    $this(sfx_manager) toggle_sound
+}
 
 
+method GameControl sound_changed {v} {
+    $this(presentation) sound_changed $v
 }
 
 
