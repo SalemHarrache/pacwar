@@ -49,9 +49,9 @@ method GameControl sound_changed {v} {
 }
 
 
-method GameControl add_player {name config} {
+method GameControl add_player {name config position_x position_y} {
     set player_id [$this(panel) add_player $name $config]
-    set ship_id [$this(universe) add_ship $name]
+    set ship_id [$this(universe) add_ship $name $position_x $position_y]
     puts $player_id
     lappend this(players) $player_id
     lappend this(ships) $ship_id

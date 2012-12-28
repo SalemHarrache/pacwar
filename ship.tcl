@@ -42,6 +42,11 @@ method ShipAbstraction init {} {
 method ShipControl init {} {
 }
 
+method ShipControl set_position {x y} {
+    $this(map) set_position $x $y
+    $this(minimap) set_position $x $y
+}
+
 method ShipControl move_left {} {
     $this(map)  move -1 0
     $this(minimap)  move -1 0
@@ -71,13 +76,17 @@ method MapShipControl move {x y} {
     $this(presentation) move $x $y
 }
 
+method MapShipControl set_position {x y} {
+    $this(presentation) move $x $y
+}
+
 method MapShipPresentation init {} {
     this set_name [$this(control) get_parent_name]
     this set_id "map_ship_[$this(control) get_parent_id]"
     this set_canvas_map [$this(control) get_parent_canvas_map]
     set bg [get_ship_bg $this(name)]
     this set_radius [expr int([image height $bg] / 2)]
-    this set_id [$this(canvas_map) create image 100  100 -anchor nw -image [get_ship_bg $this(name)]]
+    this set_id [$this(canvas_map) create image 0  0 -anchor nw -image [get_ship_bg $this(name)]]
 }
 
 method MapShipPresentation move {x y} {
@@ -86,6 +95,10 @@ method MapShipPresentation move {x y} {
 
 
 method MiniMapShipControl move {x y} {
+    $this(presentation) move $x $y
+}
+
+method MiniMapShipControl set_position {x y} {
     $this(presentation) move $x $y
 }
 

@@ -20,8 +20,9 @@ method UniverseControl init {} {
 }
 
 
-method UniverseControl add_ship {name} {
+method UniverseControl add_ship {name position_x position_y} {
     set new_ship [ShipControl ship_$name $objName ""]
+    $new_ship set_position $position_x $position_y
     lappend this(ships) $new_ship
     return [$new_ship get_id]
 }

@@ -35,14 +35,14 @@ proc run {} {
         bind . <Up>    \"\$objName move_up\"
         bind . <Down>  \"\$objName move_down\"
         bind . <Key-space>  \"\$objName shut\"
-    "
+    " 50 0
     game add_player "goteki" "
         bind . <q>  \"\$objName move_left\"
         bind . <d> \"\$objName move_right\"
         bind . <z>    \"\$objName move_up\"
         bind . <s>  \"\$objName move_down\"
         bind . <Shift_L>  \"\$objName shut\"
-    "
+    " 90 50
 
     # PlanetControl planet_1 universe .
 
