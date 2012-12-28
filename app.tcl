@@ -29,8 +29,8 @@ proc run {} {
     UniverseControl universe game .
     SoundControl sfx_manager game ""
 
-    # PlayerControl player_1 panel .
-    # PlayerControl player_2 panel .
+    game add_player "feisar"
+    game add_player "goteki"
 
     # PlanetControl planet_1 universe .
 

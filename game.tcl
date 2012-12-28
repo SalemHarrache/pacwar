@@ -46,7 +46,11 @@ method GameControl sound_changed {v} {
 }
 
 
-method GameControl add_player {player} {
+method GameControl add_player {name} {
+    $this(panel) add_player $name
+}
+
+method GameControl reset_ship_player {name} {
 
 }
 
