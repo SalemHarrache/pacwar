@@ -47,10 +47,32 @@ method GameControl sound_changed {v} {
 
 
 method GameControl add_player {name config} {
-    $this(panel) add_player $name $config
+    set player_id [$this(panel) add_player $name $config]
+    set ship_id [$this(universe) add_ship $name]
 }
 
 method GameControl reset_ship_player {name} {
+
+}
+
+method GameControl decr_ang {player_id} {
+
+}
+
+
+method GameControl incr_ang {player_id} {
+
+}
+
+method GameControl speed_up {player_id} {
+
+}
+
+method GameControl speed_down {player_id} {
+
+}
+
+method GameControl shut {player_id} {
 
 }
 

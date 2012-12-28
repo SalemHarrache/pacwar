@@ -48,13 +48,14 @@ method PanelControl add_player {name config} {
     $new_player set_binding $config
     lappend $this(players) $new_player
     $this(presentation) refresh
+    return $new_player get_id
 }
 
 
 method PanelControl get_player {id} {
     foreach player  $this(players) {
         if {[$player get_id] == $id} {
-            return player
+            return $player
         }
     }
 }
