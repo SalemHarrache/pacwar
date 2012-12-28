@@ -7,10 +7,27 @@ generate_pac_parent_accessors "Panel" frame_panel
 
 method PanelPresentation init {} {
     this set_frame_panel [$this(control) get_parent_frame_panel]
-    set this(label) [label $this(frame_panel).label -justify center -text "Joueur X"]
+    set this(player_frames) {}
     set this(volume_label) [label $this(frame_panel).volume_label -justify center -text "Volume : "]
-    pack configure $this(label) -expand 1 -fill both
-    pack configure $this(volume_label) -expand 1 -fill both
+
+    this refresh
+}
+
+method PanelPresentation get_new_player_frame {} {
+    set new_frame [frame $this(frame_panel).frame_[llength $this(player_frames)]]
+    lappend this(player_frames) $new_frame
+    return $new_frame
+}
+
+method PanelPresentation refresh {} {
+    pack forget $this(volume_label)
+    foreach frame $this(player_frames) {
+        pack forget $frame
+    }
+    foreach frame $this(player_frames) {
+        pack configure $frame  -expand 1
+    }
+    pack configure $this(volume_label) -expand 1
 }
 
 method PanelPresentation set_volume_level {v} {
@@ -19,9 +36,20 @@ method PanelPresentation set_volume_level {v} {
 
 method PanelControl init {} {
      $this(parent) set_panel $objName
+     set this(players) {}
 }
-
 
 method PanelControl sound_changed {v} {
     this user_change_volume_level $v
+}
+
+method PanelControl add_player {name} {
+    PlayerControl player_$name $objName [$this(presentation) get_new_player_frame]
+    $this(presentation) refresh
+}
+
+
+method PanelControl get_player {$id} {
+    lappend $this(players) [PlayerControl player_$name $objName [$this(presentation) get_new_player_frame]]
+    $this(presentation) refresh
 }
