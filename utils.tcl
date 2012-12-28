@@ -163,32 +163,39 @@ proc generate_pac_agent {agent {abstraction 1} {presentation 1} {control 1}} {
       method ${agent}Control init {} {}
 
       method ${agent}Control constructor {{parent \"\"} {tk_parent \"\"}} {
-        set pres \"\"
-        set abst \"\"
       "
       if {$abstraction == 1} {
-        append cmd "
-        set abst \[${agent}Abstraction \${objName}_abst \$objName\]
-        "
-      }
-      if {$presentation == 1} {
-        append cmd "
-        set pres \[${agent}Presentation \${objName}_pres \$objName \$tk_parent\]
-        "
-      }
-      append cmd "
-        this inherited \$parent \$abst \$pres
-        this init
-      "
-      if {$abstraction == 1} {
-        append cmd "
-        \$abst init
-        "
-      }
-      if {$presentation == 1} {
-        append cmd "
-        \$pres init
-        "
+        if {$presentation == 1} {
+          append cmd "
+          ${agent}Presentation \${objName}_pres \$objName \$tk_parent
+          ${agent}Abstraction \${objName}_abst \$objName
+          this inherited \$parent \${objName}_abst \${objName}_pres
+          this init
+          \${objName}_abst init
+          \${objName}_pres init
+          "
+        } else {
+          append cmd "
+          ${agent}Abstraction \${objName}_abst \$objName
+          this inherited \$parent \${objName}_abst \"\"
+          this init
+          \${objName}_abst init
+          "
+        }
+      } else {
+        if {$presentation == 1} {
+          append cmd "
+          ${agent}Presentation \${objName}_pres \$objName \$tk_parent
+          this inherited \$parent \"\" \${objName}_pres
+          this init
+          \${objName}_pres init
+          "
+        } else {
+          append cmd "
+          this inherited \$parent \"\" \"\"
+          this init
+          "
+        }
       }
       append cmd "
       }
@@ -222,7 +229,7 @@ proc generate_pac_agent_multi_view {agent views} {
 }
 
 
-proc generate_pac_accessors {agent var {propagate 1}} {
+proc generate_pac_accessors {agent var {propagate 0}} {
 
   set cmd ""
 
