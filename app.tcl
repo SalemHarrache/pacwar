@@ -1,7 +1,7 @@
 #!/bin/sh
 # restart using tclsh \
 # exec wish ./lib/tkcon.tcl -load Tk "$0" "$@" \
-exec tclsh "$0" "$@"
+exec wish "$0" "$@"
 
 package require Img
 package require Tk
@@ -25,16 +25,16 @@ proc run {} {
     global argc
 
     GameControl game "" .
-
     PanelControl panel game .
-    PlayerControl player_1 panel .
-    PlayerControl player_2 panel .
-
     UniverseControl universe game .
+    SoundControl sfx_manager game ""
 
-    PlanetControl planet_1 universe .
+    # PlayerControl player_1 panel .
+    # PlayerControl player_2 panel .
 
-    ShipControl ship_1 universe .
+    # PlanetControl planet_1 universe .
+
+    # ShipControl ship_1 universe .
 
     if {$argc > 0} {
         Introspact introspact game
