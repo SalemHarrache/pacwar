@@ -46,9 +46,9 @@ method PanelControl sound_changed {v} {
 method PanelControl add_player {name config} {
     set new_player [PlayerControl player_$name $objName [$this(presentation) get_new_player_frame]]
     $new_player set_binding $config
-    lappend $this(players) $new_player
+    lappend this(players) $new_player
     $this(presentation) refresh
-    return $new_player get_id
+    return [$new_player get_id]
 }
 
 
@@ -58,4 +58,8 @@ method PanelControl get_player {id} {
             return $player
         }
     }
+}
+
+method PanelControl send_event_from_player {event id} {
+    $this(parent) send_event_from_player $event $id
 }
