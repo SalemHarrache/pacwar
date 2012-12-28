@@ -17,7 +17,7 @@ method SoundAbstraction init {} {
     this set_battle_sound [snack::sound battle_sound -file [abspath ressources sound battle.mp3]]
     this set_end_sound [snack::sound end_sound -file [abspath ressources sound end.mp3]]
     this set_mode "main"
-    this unmute
+    this mute
 }
 
 method SoundAbstraction stop_all {} {
@@ -52,6 +52,9 @@ method SoundAbstraction unmute {} {
     this set_volume 100
 }
 
+method SoundControl init {} {
+    $this(parent) set_sfx_manager $objName
+}
 
 method SoundControl toggle_sound {} {
     if {[this get_volume] == 0} {
