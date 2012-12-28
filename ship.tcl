@@ -33,6 +33,26 @@ method ShipControl init {} {
     # return [$this(canvas_map) create image 0 0 -anchor nw -image [get_ship_bg $name] -tag mobile]
 }
 
+method ShipControl decr_ang {} {
+    puts "decr_ang"
+}
+
+method ShipControl incr_ang {} {
+    puts "incr_ang"
+}
+
+method ShipControl speed_up {} {
+    puts "speed_up"
+}
+
+method ShipControl speed_down {} {
+    puts "speed_down"
+}
+
+method ShipControl shut {} {
+    puts "shut"
+}
+
 method MapShipPresentation init {} {
     this set_name [$this(control) get_parent_name]
     this set_id "map_ship_[$this(control) get_parent_id]"
@@ -41,8 +61,8 @@ method MapShipPresentation init {} {
 }
 
 method MiniMapShipPresentation init {} {
-    # this set_name [$this(control) get_parent_name]
-    # this set_id "mini_map_ship_[$this(control) get_parent_id]"
-    # this set_canvas_mini_map [$this(control) get_parent_canvas_mini_map]
-    # $this(canvas_map) create image 0 0 -anchor nw -image [get_ship_bg $this(name)] -tag $this(id)
+    this set_name [$this(control) get_parent_name]
+    this set_id "mini_map_ship_[$this(control) get_parent_id]"
+    this set_canvas_mini_map [$this(control) get_parent_canvas_mini_map]
+    $this(canvas_mini_map) create oval 0 0 10 10 -outline [get_random_color] -fill [get_random_color]
 }
