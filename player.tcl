@@ -37,24 +37,27 @@ method PlayerControl set_binding {config} {
     eval $config
 }
 
-
-method PlayerControl decr_ang {} {
-
+method PlayerControl send_event {event} {
+    $this(parent) send_event_from_player $event [this get_id]
 }
 
 
-method PlayerControl incr_ang {} {
+method PlayerControl decr_ang {} {
+    this send_event "decr_ang"
+}
 
+method PlayerControl incr_ang {} {
+    this send_event "incr_ang"
 }
 
 method PlayerControl speed_up {} {
-
+    this send_event "speed_up"
 }
 
 method PlayerControl speed_down {} {
-
+    this send_event "speed_down"
 }
 
 method PlayerControl shut {} {
-
+    this send_event "shut"
 }
