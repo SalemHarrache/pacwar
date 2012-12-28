@@ -16,18 +16,18 @@ generate_pac_presentation_accessors MiniMapUniverse canvas_mini_map
 
 method UniverseControl init {} {
     $this(parent) set_universe $objName
-    set this(ships) {}
+    set this(ships) [list]
 }
 
 
 method UniverseControl add_ship {name} {
     set new_ship [ShipControl ship_$name $objName ""]
-    lappend $this(ships) $new_ship
-    return $new_ship get_id
+    lappend this(ships) $new_ship
+    return [$new_ship get_id]
 }
 
 
-method PanelControl get_ship {id} {
+method UniverseControl get_ship {id} {
     foreach ship  $this(ships) {
         if {[$ship get_id] == $id} {
             return $ship
@@ -35,6 +35,9 @@ method PanelControl get_ship {id} {
     }
 }
 
+method UniverseControl send_event_to_ship {event ship_id} {
+    [this get_ship $ship_id] $event
+}
 
 method MapUniversePresentation init {} {
     this set_num_background 0
