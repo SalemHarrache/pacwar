@@ -1,5 +1,16 @@
 generate_pac_agent "Game"
 
+
+# Noyau du jeu
+generate_pac_accessors Game kernel
+
+# Univers
+generate_simple_accessors GameControl universe
+generate_simple_accessors GameControl panel
+# Pour gerer le son depuis Game
+generate_simple_accessors GameControl sfx_manager
+
+
 # Sert a afficher la map
 generate_pac_presentation_accessors Game canvas_map
 # Sert a afficher la mini map
@@ -8,13 +19,36 @@ generate_pac_presentation_accessors Game canvas_mini_map
 generate_pac_presentation_accessors Game frame_panel
 # Sert juste à regrouper le panel et la mini map
 generate_pac_presentation_accessors Game frame_wrapper
-# Sert a afficher la mini map
+# Mode d'affichage
 generate_pac_presentation_accessors Game display_mode
 # Pour gerer l'activation ou pas de la musique dans le jeu
 generate_pac_presentation_accessors Game mute
-# Pour gerer le son depuis Game
-generate_simple_accessors GameControl sfx_manager
 
+
+method GameAbstraction init {} {
+    this set_kernel [SWL_FC S_$objName]
+    $this(kernel) Subscribe_after_Add_new_player A "$this(control) add_player \$rep \$name"
+}
+
+
+method GameControl init {} {
+    bind . <Control-Key-s> "$objName toggle_sound"
+}
+
+
+method GameControl toggle_sound {} {
+    $this(sfx_manager) toggle_sound
+}
+
+
+method GameControl sound_changed {v} {
+    $this(panel) sound_changed $v
+}
+
+
+method GameControl add_player {player} {
+
+}
 
 
 method GamePresentation init {} {
@@ -41,10 +75,6 @@ method GamePresentation init {} {
     wm maxsize $this(tk_parent) 0 0
 }
 
-method GamePresentation sound_changed {v} {
-    puts "volume : $v"
-}
-
 method GamePresentation switch_view_mode {} {
     if {[this get_display_mode] == "vertical"} {
         this set_display_mode "horizontal"
@@ -67,23 +97,3 @@ method GamePresentation refresh {} {
         pack configure $this(canvas_map)  -expand 1 -side right -fill both
     }
 }
-
-method GameControl init {} {
-    this set_sfx_manager [SoundControl sfx_manager $objName ""]
-    bind . <Control-Key-s> "$objName toggle_sound"
-}
-
-method GameControl toggle_sound {} {
-    $this(sfx_manager) toggle_sound
-}
-
-
-method GameControl sound_changed {v} {
-    $this(presentation) sound_changed $v
-}
-
-
-method GameControl add_player {player} {
-
-}
-
