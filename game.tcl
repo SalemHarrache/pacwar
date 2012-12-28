@@ -3,6 +3,8 @@ generate_pac_agent "Game"
 
 # Noyau du jeu
 generate_pac_accessors Game kernel
+generate_simple_accessors GameControl players
+generate_simple_accessors GameControl ships
 
 # Univers
 generate_simple_accessors GameControl universe
@@ -32,7 +34,8 @@ method GameAbstraction init {} {
 
 
 method GameControl init {} {
-
+    this set_players [list]
+    this set_ships [list]
 }
 
 
@@ -49,31 +52,25 @@ method GameControl sound_changed {v} {
 method GameControl add_player {name config} {
     set player_id [$this(panel) add_player $name $config]
     set ship_id [$this(universe) add_ship $name]
+    puts $player_id
+    lappend this(players) $player_id
+    lappend this(ships) $ship_id
 }
 
 method GameControl reset_ship_player {name} {
 
 }
 
-method GameControl decr_ang {player_id} {
-
+method GameControl send_event_from_player {event player_id} {
+    $this(universe) send_event_to_ship $event [this get_ship_from_player $player_id]
 }
 
-
-method GameControl incr_ang {player_id} {
-
+method GameControl get_ship_from_player {player_id} {
+    return [lindex $this(ships) [lsearch $this(players) $player_id]]
 }
 
-method GameControl speed_up {player_id} {
-
-}
-
-method GameControl speed_down {player_id} {
-
-}
-
-method GameControl shut {player_id} {
-
+method GameControl get_player_from_ship {player_id} {
+    return [lindex $this(players) [lsearch $this(ships) $ship_id]]
 }
 
 
