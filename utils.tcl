@@ -5,6 +5,8 @@
 #   check if the calling script was executed on the command line or sourced
 #
 
+set global_id 0
+
 proc abspath {arg args} {
     set cmd "return \[file normalize \[file join $arg $args]]"
     eval $cmd
@@ -36,6 +38,12 @@ proc is_defined {procname} {
 proc loop_sound sound {
     set cmd "$sound play -command {loop_sound $sound}"
     eval $cmd
+}
+
+proc get_new_id {} {
+  global global_id
+  incr global_id
+  return global_id
 }
 
 # Images
