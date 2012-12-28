@@ -29,8 +29,20 @@ proc run {} {
     UniverseControl universe game .
     SoundControl sfx_manager game ""
 
-    game add_player "feisar"
-    game add_player "goteki"
+    game add_player "feisar" "
+        bind . <Left>  \"\$objName decr_ang\"
+        bind . <Right> \"\$objName incr_ang\"
+        bind . <Up>    \"\$objName speed_up\"
+        bind . <Down>  \"\$objName speed_down\"
+        bind . <Key-space>  \"\$objName shut\"
+    "
+    game add_player "goteki" "
+        bind . <q>  \"\$objName decr_ang\"
+        bind . <d> \"\$objName incr_ang\"
+        bind . <z>    \"\$objName speed_up\"
+        bind . <s>  \"\$objName speed_down\"
+        bind . <Shift_L>  \"\$objName shut\"
+    "
 
     # PlanetControl planet_1 universe .
 
