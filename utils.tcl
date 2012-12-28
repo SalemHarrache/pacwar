@@ -43,7 +43,7 @@ proc loop_sound sound {
 proc get_new_id {} {
   global global_id
   incr global_id
-  return global_id
+  return $global_id
 }
 
 # Images
