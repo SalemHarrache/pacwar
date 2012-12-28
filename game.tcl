@@ -32,7 +32,7 @@ method GameAbstraction init {} {
 
 
 method GameControl init {} {
-    bind . <Control-Key-s> "$objName toggle_sound"
+
 }
 
 
@@ -53,8 +53,6 @@ method GameControl add_player {player} {
 
 method GamePresentation init {} {
     wm aspect $this(tk_parent) 3 2 3 2
-    # wm minsize $this(tk_parent) 1200 1200
-    # wm maxsize $this(tk_parent) 1200 1200
     wm title $this(tk_parent) "PacWar !"
     this set_display_mode vertical
 
@@ -71,8 +69,6 @@ method GamePresentation init {} {
     pack $this(canvas_mini_map) -fill both
 
     bind $this(tk_parent) <Control-Key-p> "$objName switch_view_mode; $objName refresh"
-    wm minsize $this(tk_parent) 0 0
-    wm maxsize $this(tk_parent) 0 0
 }
 
 method GamePresentation switch_view_mode {} {

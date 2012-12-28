@@ -54,6 +54,7 @@ method SoundAbstraction unmute {} {
 
 method SoundControl init {} {
     $this(parent) set_sfx_manager $objName
+    bind . <Control-Key-s> "$objName toggle_sound"
 }
 
 method SoundControl toggle_sound {} {
