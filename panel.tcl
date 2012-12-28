@@ -43,13 +43,18 @@ method PanelControl sound_changed {v} {
     this user_change_volume_level $v
 }
 
-method PanelControl add_player {name} {
-    PlayerControl player_$name $objName [$this(presentation) get_new_player_frame]
+method PanelControl add_player {name config} {
+    set new_player [PlayerControl player_$name $objName [$this(presentation) get_new_player_frame]]
+    $new_player set_binding $config
+    lappend $this(players) $new_player
     $this(presentation) refresh
 }
 
 
-method PanelControl get_player {$id} {
-    lappend $this(players) [PlayerControl player_$name $objName [$this(presentation) get_new_player_frame]]
-    $this(presentation) refresh
+method PanelControl get_player {id} {
+    foreach player  $this(players) {
+        if {[$player get_id] == $id} {
+            return player
+        }
+    }
 }
