@@ -42,20 +42,20 @@ method PlayerControl send_event {event} {
 }
 
 
-method PlayerControl decr_ang {} {
-    this send_event "decr_ang"
+method PlayerControl move_left {} {
+    this send_event "move_left"
 }
 
-method PlayerControl incr_ang {} {
-    this send_event "incr_ang"
+method PlayerControl move_right {} {
+    this send_event "move_right"
 }
 
-method PlayerControl speed_up {} {
-    this send_event "speed_up"
+method PlayerControl move_up {} {
+    this send_event "move_up"
 }
 
-method PlayerControl speed_down {} {
-    this send_event "speed_down"
+method PlayerControl move_down {} {
+    this send_event "move_down"
 }
 
 method PlayerControl shut {} {
