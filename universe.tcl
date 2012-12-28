@@ -16,6 +16,23 @@ generate_pac_presentation_accessors MiniMapUniverse canvas_mini_map
 
 method UniverseControl init {} {
     $this(parent) set_universe $objName
+    set this(ships) {}
+}
+
+
+method UniverseControl add_ship {name} {
+    set new_ship [ShipControl ship_$name $objName ""]
+    lappend $this(ships) $new_ship
+    return $new_ship get_id
+}
+
+
+method PanelControl get_ship {id} {
+    foreach ship  $this(ships) {
+        if {[$ship get_id] == $id} {
+            return $ship
+        }
+    }
 }
 
 
@@ -29,11 +46,6 @@ method MapUniversePresentation init {} {
     $this(canvas_map) create image 0 0 -anchor nw -image [get_random_planet_bg] -tag mobile
 
     $this(canvas_map) create image 0 0 -anchor nw -image [get_random_planet_bg] -tag mobile
-
-    this add_ship "feisar"
-    this add_ship "goteki"
-    this add_ship "feisar"
-    this add_ship "goteki"
 
     set cmd "
     $this(canvas_map) bind mobile <Button-1> {
@@ -54,10 +66,6 @@ method MapUniversePresentation init {} {
 
     bind $this(tk_parent) <Control-Key-b> "$objName switch_background"
 
-}
-
-method MapUniversePresentation add_ship {name} {
-    return [$this(canvas_map) create image 0 0 -anchor nw -image [get_ship_bg $name] -tag mobile]
 }
 
 method MapUniversePresentation switch_background {} {
