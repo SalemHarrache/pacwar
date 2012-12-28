@@ -227,10 +227,11 @@ proc generate_pac_agent_multi_view {agent views} {
   method ${agent}Control constructor {{parent \"\"} {tk_parent \"\"}} {
     ${agent}Abstraction \${objName}_abst \$objName
     this inherited \$parent \${objName}_abst \"\"
-    foreach name \[\list ${views}\] {
-        \${name}${agent}Control \${name}_\${objName} \$objName \$tk_parent
-    }
     this init
+    \${objName}_abst init
+    foreach name \[\list ${views}\] {
+        set this(\[string tolower \$name\]) \[\${name}${agent}Control \${name}_\${objName} \$objName \$tk_parent\]
+    }
   }"
   # puts $cmd
   eval $cmd
