@@ -90,6 +90,29 @@ proc get_random_color {} {
     return [format "#%02x%02x%02x" $r $g $b]
 }
 
+# operateur
+proc - {num1 num2} {
+    return [expr {$num1 - $num2}]
+}
+proc + {num1 num2} {
+    return [expr {$num1 + $num2}]
+}
+proc * {num1 num2} {
+    return [expr {$num1 * $num2}]
+}
+proc / {num1 num2} {
+    return [expr {$num1 / $num2}]
+}
+proc cos {angle} {
+    return [expr cos($angle)]
+}
+proc sin {angle} {
+    return [expr sin($angle)]
+}
+proc toInt {num} {
+    return [expr int($num)]
+}
+
 proc is_main {} {
   global argv0
   return [string equal [info script] $argv0]
