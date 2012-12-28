@@ -1,4 +1,3 @@
-
 # Génération d'un agent pac multivue : MapUniverse et MiniMapUniverse
 generate_pac_agent_multi_view "Universe" [list "Map" "MiniMap"]
 
@@ -15,6 +14,11 @@ generate_pac_presentation_accessors MapUniverse num_background
 generate_pac_presentation_accessors MiniMapUniverse canvas_mini_map
 
 
+method UniverseControl init {} {
+    $this(parent) set_universe $objName
+}
+
+
 method MapUniversePresentation init {} {
     this set_num_background 0
     this set_canvas_map [$this(control) get_parent_canvas_map]
@@ -26,6 +30,8 @@ method MapUniversePresentation init {} {
 
     $this(canvas_map) create image 0 0 -anchor nw -image [get_random_planet_bg] -tag mobile
 
+    this add_ship "feisar"
+    this add_ship "goteki"
     this add_ship "feisar"
     this add_ship "goteki"
 
