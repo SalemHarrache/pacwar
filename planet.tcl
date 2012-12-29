@@ -53,7 +53,9 @@ method MapPlanetPresentation delete {} {
     $this(canvas_map) delete [this get_id]
 }
 
-
+method MapPlanetPresentation destructor {} {
+    this delete
+}
 
 method MiniMapPlanetPresentation init {} {
     this set_canvas_mini_map [$this(control) get_parent_canvas_mini_map]
@@ -69,4 +71,8 @@ method MiniMapPlanetPresentation draw {x y radius} {
 
 method MiniMapPlanetPresentation delete {} {
     $this(canvas_mini_map) delete [this get_id]
+}
+
+method MiniMapPlanetPresentation destructor {} {
+    this delete
 }
