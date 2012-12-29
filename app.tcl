@@ -29,8 +29,20 @@ proc run {} {
     UniverseControl universe game .
     SoundControl sfx_manager game ""
 
+    # 2 players
     game add_player "feisar" 50 0
-    game add_player "goteki"  90 50
+    game add_player "goteki"  90 50 
+
+    # 10 planets
+    game add_planet 190 249 80 50
+    # game add_planet 294 795 80 50
+    game add_planet 27 1001 80 50
+    game add_planet 642 147 80 50
+    game add_planet 10 10 80 50
+    game add_planet 600 700 80 50
+    game add_planet 1400 1001 80 50
+    game add_planet 1200 1500 80 50
+    game add_planet 1600 800 80 50
 
     # PlanetControl planet_1 universe .
 
