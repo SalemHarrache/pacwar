@@ -29,24 +29,10 @@ proc run {} {
     UniverseControl universe game .
     SoundControl sfx_manager game ""
 
-    game add_player "feisar" "
-        bind . <Left>  \"\$objName move_left\"
-        bind . <Right> \"\$objName move_right\"
-        bind . <Up>    \"\$objName move_up\"
-        bind . <Down>  \"\$objName move_down\"
-        bind . <Key-space>  \"\$objName shut\"
-    " 50 0
-    game add_player "goteki" "
-        bind . <q>  \"\$objName move_left\"
-        bind . <d> \"\$objName move_right\"
-        bind . <z>    \"\$objName move_up\"
-        bind . <s>  \"\$objName move_down\"
-        bind . <Shift_L>  \"\$objName shut\"
-    " 90 50
+    game add_player "feisar" 50 0
+    game add_player "goteki"  90 50
 
     # PlanetControl planet_1 universe .
-
-    # ShipControl ship_1 universe .
 
     if {$argc > 0} {
         Introspact introspact game
@@ -54,3 +40,18 @@ proc run {} {
 }
 
 run
+
+# "
+#         bind . <Left>  \"\$objName move_left\"
+#         bind . <Right> \"\$objName move_right\"
+#         bind . <Up>    \"\$objName move_up\"
+#         bind . <Down>  \"\$objName move_down\"
+#         bind . <Key-space>  \"\$objName shut\"
+#     " 
+# "
+#         bind . <q>  \"\$objName move_left\"
+#         bind . <d> \"\$objName move_right\"
+#         bind . <z>    \"\$objName move_up\"
+#         bind . <s>  \"\$objName move_down\"
+#         bind . <Shift_L>  \"\$objName shut\"
+#     "
