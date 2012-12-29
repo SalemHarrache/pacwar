@@ -39,9 +39,10 @@ method ShipControl draw {} {
 method ShipControl move {x y} {
     [$this(map) attribute presentation] move $x $y
     [$this(minimap) attribute presentation] move $x $y
+    this set_position_x [expr [this get_position_x] + [expr $x * 10]]
+    this set_position_y [expr [this get_position_y] + [expr $y * 10]]
     [this get_kernel] Update_ship [this get_player_id] [this get_id] \
-                                  [dict create x [expr [this get_position_x] + $x] \
-                                               y [expr [this get_position_y] + $y]]
+                                  [dict create x [this get_position_x] y [this get_position_y]]
 }
 
 method ShipControl move_left {} {
@@ -61,8 +62,7 @@ method ShipControl move_down {} {
 }
 
 method ShipControl shut {} {
-    [this get_kernel] Update_ship [this get_player_id] [this get_id] [dict create fire_velocity 1 fire_angle 1]
-
+    [this get_kernel] Update_ship [this get_player_id] [this get_id] [dict create fire_velocity 10 fire_angle [to_radian 90]]
 }
 
 
@@ -80,6 +80,10 @@ method MapShipPresentation move {x y} {
     move_canvas $this(canvas_map) [this get_id] [expr $x * 10] [expr $y * 10]
 }
 
+method MapShipPresentation destructor {} {
+    $this(canvas_map) delete [this get_id]
+}
+
 # MiniMap
 method MiniMapShipPresentation init {} {
     this set_canvas_mini_map [$this(control) get_parent_canvas_mini_map]
@@ -95,4 +99,12 @@ method MiniMapShipPresentation draw {x y radius} {
 
 method MiniMapShipPresentation move {x y} {
     move_canvas $this(canvas_mini_map) [this get_id] $x $y
+}
+
+method MiniMapShipPresentation delete {} {
+    $this(canvas_mini_map) delete [this get_id]
+}
+
+method MiniMapShipPresentation destructor {} {
+    this delete
 }
