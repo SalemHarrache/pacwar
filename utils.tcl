@@ -127,17 +127,21 @@ proc loop_sound sound {
     eval $cmd
 }
 
-proc get_new_id {} {
-  global global_id
-  incr global_id
-  return $global_id
-}
-
 # Images
 proc get_random_planet_bg {} {
   set path [abspath ressources planet "planet[random 12].png"]
   return [image create photo -file $path]
-}
+} 
+
+proc get_planet_img {num} {
+  return [image create photo -file [abspath ressources planet "planet${num}.png"]]
+} 
+
+proc get_random_planet {} {
+  set img [image create photo -file [abspath ressources planet "planet[random 12].png"]]
+  set height [image height $img]
+  return [list $img [expr ($height / 2)]] [expr ($height / 4)]]
+} 
 
 proc get_ship_bg {name} {
   set path [abspath ressources ship "$name.png"]
@@ -147,6 +151,15 @@ proc get_ship_bg {name} {
 proc get_new_universe_bg {{num 0}} {
   set path [abspath ressources universe "universe[expr $num % 3].jpg"]
   return [image create photo -file $path]
+}
+
+# Canvas
+proc move_canvas {w wid x y} {
+    set movement {}
+    foreach {xx yy} [$w coords $wid] {
+        lappend movement [expr {$xx + $x}] [expr {$yy + $y}]
+    }
+    $w coords $wid $movement
 }
 
 
