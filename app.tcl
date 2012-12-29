@@ -30,8 +30,8 @@ proc run {} {
     SoundControl sfx_manager game ""
 
     # 2 players
-    game add_player "feisar" 100 500
-    game add_player "goteki"  800 500 
+    game add_player "feisar" 200 100
+    game add_player "goteki"  800 500
 
     # 10 planets
     game add_planet 190 249 80 50
