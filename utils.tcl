@@ -335,6 +335,7 @@ proc generate_pac_accessors {agent var {propagate 0}} {
 
   # Generates accessors for the control facet $C
   if {[is_defined "${agent}Control"]} {
+    append cmd "method ${agent}Control set_$var {v} {if {\$this(abstraction) != \"\"} {\$this(abstraction) set_$var \$v}}\n"
     append cmd "method ${agent}Control user_change_$var {v} {if {\$this(abstraction) != \"\"} {\$this(abstraction) set_$var \$v}}\n"
     append cmd "method ${agent}Control system_change_$var {v} {
                   if {\$this(presentation) != \"\"} {
