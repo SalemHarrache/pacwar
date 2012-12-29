@@ -41,9 +41,12 @@ method UniverseControl add_ship_callback {id x y r} {
 }
 
 method UniverseControl add_planet_callback {id x y radius density} {
-    set new_ship [ShipControl $id $objName ""]
-    $new_ship set_position $x $y
-    lappend this(ships) $new_ship
+    set new_planet [PlanetControl $id $objName ""]
+    $new_planet set_radius $radius
+    $new_planet set_density $density
+    $new_planet set_position_x $x
+    $new_planet set_position_y $y
+    $new_planet draw
 }
 
 
@@ -67,27 +70,6 @@ method MapUniversePresentation init {} {
     $this(canvas_map) configure -width 400 -height 200 -background "#191919"
 
     initBackground $this(canvas_map) [get_new_universe_bg]
-
-    $this(canvas_map) create image 0 0 -anchor nw -image [get_random_planet_bg] -tag mobile
-
-    $this(canvas_map) create image 0 0 -anchor nw -image [get_random_planet_bg] -tag mobile
-
-    set cmd "
-    $this(canvas_map) bind mobile <Button-1> {
-        set selected \[$this(canvas_map) find closest %x %y\]
-        set atx %x
-        set aty %y
-    }"
-
-    append cmd "
-    $this(canvas_map) bind mobile <B1-Motion> {
-        set changed_x \[expr %x - \$atx\]
-        set changed_y \[expr %y - \$aty\]
-        $this(canvas_map) move \$selected \$changed_x \$changed_y
-        set atx %x
-        set aty %y
-    }"
-    eval $cmd
 
     bind $this(tk_parent) <Control-Key-b> "$objName switch_background"
 
