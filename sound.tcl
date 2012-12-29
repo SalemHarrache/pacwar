@@ -16,7 +16,7 @@ method SoundAbstraction init {} {
     this set_main_sound [snack::sound main_sound -file [abspath ressources sound main.mp3]]
     this set_battle_sound [snack::sound battle_sound -file [abspath ressources sound battle.mp3]]
     this set_end_sound [snack::sound end_sound -file [abspath ressources sound end.mp3]]
-    this set_mode "main"
+    this set_mode "battle"
     this mute
 }
 
