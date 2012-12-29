@@ -51,8 +51,8 @@ method GameControl sound_changed {v} {
 method GameControl add_player {name position_x position_y} {
     set player_id [[this get_kernel] Add_new_player $name]
     set ship_id [[this get_kernel] Add_new_ship $player_id $position_x $position_y 50]
-    lappend this(players) $player_id
-    lappend this(ships) $ship_id
+    lappend this(players) [lindex $player_id [expr ([llength $player_id] - 1)]]
+    lappend this(ships) [lindex [split "$ship_id" "_"] 1]
 }
 
 method GameControl add_planet { position_x position_y radius density} {
