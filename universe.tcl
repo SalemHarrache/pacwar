@@ -20,8 +20,9 @@ generate_pac_presentation_accessors MiniMapUniverse canvas_mini_map
 method UniverseAbstraction init {} {
     this set_kernel [$this(control) get_parent_kernel]
     $this(kernel) Subscribe_after_Add_new_planet A "$this(control) add_planet_callback \$rep \$x \$y \$radius \$density"
-    # $this(kernel) Subscribe_after_Update_planet A "$this(control) update_planet \$id \$D_update"
-    $this(kernel) Subscribe_after_Add_new_ship A "$this(control) add_ship_callback \$rep \$x \$y \$radius"
+    $this(kernel) Subscribe_after_Add_new_ship A "$this(control) add_ship_callback \$rep \$x \$y \$radius \$id_player"
+    $this(kernel) Subscribe_after_Update_ship A "$this(control) update_ship_callback \$id_player \$id \$this(D_players)"
+    $this(kernel) Subscribe_after_Update_planet A "$this(control) update_planet_callback \$id \$D_update"
     # $this(kernel) Subscribe_after_Update_ship A "$this(control) update_ship \$id \$D_update"
     # $this(kernel) Subscribe_after_Start_fire A "$this(control) start_fire \$rep \$this(L_bullets)"
     # $this(kernel) Subscribe_after_Compute_a_simulation_step A "$this(control) update_fire \$rep \$this(L_bullets)"
@@ -32,15 +33,27 @@ method UniverseAbstraction init {} {
 method UniverseControl init {} {
     $this(parent) set_universe $objName
     set this(ships) [list]
+    set this(planets) [list]
 }
 
-method UniverseControl add_ship_callback {id x y radius} {
+method UniverseControl add_ship_callback {id x y radius player_id} {
     set new_ship [ShipControl $id $objName ""]
     $new_ship set_position_x $x
     $new_ship set_position_y $y
     $new_ship set_radius $radius
+    $new_ship set_player_id $player_id
     $new_ship draw
     lappend this(ships) $new_ship
+}
+
+method UniverseControl update_ship_callback {player_id id D_players} {
+    set ship [this get_ship $id]
+    if {$ship != ""} {
+        $ship set_position_x  [dict get $D_players $player_id D_ships $id x]
+        $ship set_position_y [dict get $D_players $player_id D_ships $id y]
+        $ship set_radius [dict get $D_players $player_id D_ships $id radius]
+        puts "update ship : [$ship get_position_x] [$ship get_position_y]"
+    }
 }
 
 method UniverseControl add_planet_callback {id x y radius density} {
@@ -50,8 +63,28 @@ method UniverseControl add_planet_callback {id x y radius density} {
     $new_planet set_position_x $x
     $new_planet set_position_y $y
     $new_planet draw
+    lappend this(planets) $new_planet
 }
 
+method UniverseControl update_planet_callback {id D_update} {
+    set planet [this get_planet $id]
+    if {$planet != ""} {
+        $planet set_radius [dict get $D_update $id radius]
+        $planet set_density [dict get $D_update $id density]
+        $planet set_position_x [dict get $D_update $id x]
+        $planet set_position_y [dict get $D_update $id y]
+        puts "update planet : [$planet get_x] [$planet get_y]"
+    }
+}
+
+
+method UniverseControl get_planet {id} {
+    foreach planet  $this(planets) {
+        if {[$planet get_id] == $id} {
+            return $planet
+        }
+    }
+}
 
 method UniverseControl get_ship {id} {
     foreach ship  $this(ships) {

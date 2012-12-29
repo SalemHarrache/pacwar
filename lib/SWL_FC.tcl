@@ -12,7 +12,7 @@ method SWL_FC constructor {} {
 	set this(uid) 0
 	set this(dt)  0.05
 	set this(simulation_step) 10
-	
+
 	this reset
 }
 
@@ -32,7 +32,7 @@ method SWL_FC reset {} {
 	set this(D_planets) [dict create]
 	set this(D_players) [dict create]
 	set this(L_bullets) [list]
-	
+
 	set this(interupt_simulation) 0
 }
 
@@ -65,7 +65,7 @@ method SWL_FC Start_fire {} {
 			 lappend this(L_bullets) Bullet_$id_ship $x $y $vx $vy
 			}
 		}
-	
+
 	# Start simulation loop
 	this Compute_a_simulation_step
 }
@@ -81,7 +81,7 @@ method SWL_FC Collision_with_planets {x y} {
 			 return 1
 			}
 		}
-			
+
 	return 0
 }
 
@@ -116,7 +116,7 @@ method SWL_FC Compute_acceleration_at {x y} {
 		 set ax [expr $ax + $DX * $M / ($D * $distance)]
 		 set ay [expr $ay + $DY * $M / ($D * $distance)]
 		}
-		
+
 	return [list $ax $ay]
 }
 
@@ -139,7 +139,7 @@ method SWL_FC Compute_a_simulation_step {} {
 		 lappend new_L_bullets $id $x $y $vx $vy
 		}
 	set this(L_bullets) $new_L_bullets
-	
+
 	# Prepare a new step if needed
 	if {[llength $this(L_bullets)] > 0 && !$this(interupt_simulation)} {
 		 after $this(simulation_step) [list $objName Compute_a_simulation_step]
@@ -197,7 +197,7 @@ method SWL_FC Update_player {id D_update} {
 #___________________________________________________________________________________________________________________________________________
 method SWL_FC Add_new_ship {id_player x y radius} {
 	if {![dict exists $this(D_players) $id_player]} {error "There is no player identified by $id_player\nPlayers are: $this(D_players)"}
-	set id [this generate_uid "${id_player}_s"]
+	set id [this generate_uid "s"]
 	dict set this(D_players) $id_player D_ships $id [dict create x $x y $y radius $radius energy 100 fire_velocity 0 fire_angle 0]
 	return $id
 }
@@ -224,7 +224,7 @@ proc Generate_SWL_FC_subscriber {C L_methods} {
 	foreach M $L_methods {
 		 # Rename the original method
 		 method $C Original_$M [gmlObject info arglist $C $M] [gmlObject info body $C $M]
-		 
+
 		 # Redefine the method so that Callbacks are called
 		 set ARGS [list]; foreach a [gmlObject info args $C $M] {append ARGS " \$[lindex $a 0]"}
 		 method $C $M [gmlObject info arglist $C $M] "
@@ -233,11 +233,11 @@ proc Generate_SWL_FC_subscriber {C L_methods} {
 			 dict for {key_of_the_CB_$M value_of_the_CB_$M} \$this(D_CB_after_$M)  {eval \$value_of_the_CB_$M}
 			 return \$rep
 			"
-			
+
 		 # Generate Subscribers methods
 		 method $C Subscribe_before_$M {id CB} "dict set this(D_CB_before_$M) \$id \$CB"
 		 method $C Subscribe_after_$M  {id CB} "dict set this(D_CB_after_$M)  \$id \$CB"
-		 
+
 		 # Add to the constructor Callback list attribute
 		 method $C constructor [gmlObject info arglist $C constructor] "\tset this(D_CB_before_$M) \[dict create\]; set this(D_CB_after_$M) \[dict create\]\n[gmlObject info body $C constructor]"
 		}

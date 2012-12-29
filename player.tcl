@@ -6,7 +6,7 @@ generate_pac_accessors Player name
 
 
 method PlayerAbstraction init {} {
-    set infos [split "$objName" "_"] 
+    set infos [split "$objName" "_"]
     this set_name [lindex $infos [expr ([llength $infos] - 2)]]
     this set_id "[lindex $infos [expr ([llength $infos] - 3)]]"
     this set_score 10
