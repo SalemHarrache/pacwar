@@ -35,9 +35,8 @@ proc move_canvas {w wid x y} {
 
 
 method ShipAbstraction init {} {
-
     this set_name [lindex [split "$objName" "_"] 1]
-    this set_id [get_new_id]
+    this set_id $objName
 }
 
 method ShipControl init {} {
