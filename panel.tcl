@@ -32,6 +32,7 @@ method PanelControl add_player_callback {id name} {
     set new_player [PlayerControl ${id}_${name} $objName [$this(presentation) get_new_player_frame]]
     $new_player set_binding
     lappend this(players) $new_player
+    $this(presentation) refresh
 }
 
 
