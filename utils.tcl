@@ -13,8 +13,12 @@ proc abspath {arg args} {
 }
 
 #### globals
-set ::pi  [expr 4 * atan(1)]
-set ::deg [expr $pi / 180]
+set pi [expr 4 * atan(1)]
+
+proc to_radian {deg} {
+  global pi
+  return [expr ($pi * $deg)/ 180]
+}
 
 # # Sound
 load [abspath lib snack libsnack.so]
@@ -234,7 +238,6 @@ proc generate_pac_agent {agent {abstraction 1} {presentation 1} {control 1}} {
         this inherited \$control
       }
       method ${agent}Abstraction destructor {} {
-        this inherited
       }"
   }
   if {$presentation == 1} {
@@ -250,7 +253,6 @@ proc generate_pac_agent {agent {abstraction 1} {presentation 1} {control 1}} {
       }
 
       method ${agent}Presentation destructor {} {
-        this inherited
       }"
   }
   if {$control == 1} {
@@ -298,7 +300,6 @@ proc generate_pac_agent {agent {abstraction 1} {presentation 1} {control 1}} {
       append cmd "
       }
       method ${agent}Control destructor {} {
-        this inherited
       }"
   }
   # puts $cmd
@@ -420,7 +421,6 @@ proc get_p1_control {} {
         bind . <Right> \"\$objName move_right\"
         bind . <Up>    \"\$objName move_up\"
         bind . <Down>  \"\$objName move_down\"
-        bind . <Key-space>  \"\$objName shut\"
     "
 }
 
@@ -428,6 +428,5 @@ proc get_p2_control {} {
     return  " bind . <q>  \"\$objName move_left\"
               bind . <d> \"\$objName move_right\"
               bind . <z>    \"\$objName move_up\"
-              bind . <s>  \"\$objName move_down\"
-              bind . <Shift_L>  \"\$objName shut\""
+              bind . <s>  \"\$objName move_down\""
 }
