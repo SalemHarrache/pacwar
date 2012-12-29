@@ -78,6 +78,8 @@ method SWL_FC Collision_with_planets {x y} {
 		 set DY [expr [dict get $D_planet y] - $y]
 		 set distance [expr sqrt($DX * $DX + $DY * $DY)]
 		 if {$distance <= [dict get $D_planet radius]} {
+		 	 # remove the ship
+			 this Destroy_planet $id_planet
 			 return 1
 			}
 		}
@@ -159,7 +161,7 @@ method SWL_FC Add_new_planet {x y radius density} {
 #___________________________________________________________________________________________________________________________________________
 method SWL_FC Destroy_planet {id} {
 	if {![dict exists $this(D_planets) $id]} {error "There is no planet identified by $id\nPlanets are: $this(D_planets)"}
-	dict unset $this(D_planets) $id
+	set this(D_planets) [dict remove $this(D_planets) $id]
 }
 
 #___________________________________________________________________________________________________________________________________________
