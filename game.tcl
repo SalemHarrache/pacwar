@@ -28,8 +28,7 @@ generate_pac_presentation_accessors Game mute
 
 
 method GameAbstraction init {} {
-    this set_kernel [SWL_FC S_$objName]
-    $this(kernel) Subscribe_after_Add_new_player A "$this(control) add_player \$rep \$name"
+    this set_kernel [SWL_FC kernel]
 }
 
 
@@ -49,10 +48,9 @@ method GameControl sound_changed {v} {
 }
 
 
-method GameControl add_player {name config position_x position_y} {
-    set player_id [$this(panel) add_player $name $config]
-    set ship_id [$this(universe) add_ship $name $position_x $position_y]
-    puts $player_id
+method GameControl add_player {name position_x position_y} {
+    set player_id [[this get_kernel] Add_new_player $name]
+    set ship_id [[this get_kernel] Add_new_ship $player_id $position_x $position_y 50]
     lappend this(players) $player_id
     lappend this(ships) $ship_id
 }
