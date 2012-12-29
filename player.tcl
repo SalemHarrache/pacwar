@@ -8,7 +8,7 @@ generate_pac_accessors Player name
 method PlayerAbstraction init {} {
     set infos [split "$objName" "_"] 
     this set_name [lindex $infos [expr ([llength $infos] - 2)]]
-    this set_id "[lindex $infos [expr ([llength $infos] - 4)]]_[lindex $infos [expr ([llength $infos] - 3)]]"
+    this set_id "[lindex $infos [expr ([llength $infos] - 3)]]"
     this set_score 10
 }
 
@@ -28,14 +28,8 @@ method PlayerPresentation refresh {} {
     set this(label) configure -text [this get_label_message]
 }
 
-
-method PlayerControl init {} {
-
-}
-
-
-method PlayerControl set_binding {config} {
-    eval $config
+method PlayerControl set_binding {} {
+    eval [get_[this get_id]_control]
 }
 
 method PlayerControl send_event {event} {
