@@ -1,3 +1,8 @@
-Utiliser des frames partout
-Commencer l'interface
-Faire le noyau pour chaque agent
+- Mise a jour des données du noyaux
+- Colisions lors des deplacement des vaisseaux
+- Un vaisseau vise vers le bas et l'autre vers le haut (pour qu'il y a combat) 
+- (car on ne gere pas de rotation du vaisseau)
+- Shut !!
+- Clean le code
+- Mettre un place un scénario de demo à montrer au prof
+
