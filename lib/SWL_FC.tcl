@@ -8,6 +8,7 @@
 #___________________________________________________________________________________________________________________________________________
 #___________________________________________________________________________________________________________________________________________
 method SWL_FC constructor {} {
+	set this(player_uid) 0
 	set this(uid) 0
 	set this(dt)  0.05
 	set this(simulation_step) 10
@@ -19,6 +20,11 @@ method SWL_FC constructor {} {
 method SWL_FC generate_uid {prefix} {
 	incr this(uid)
 	return ${prefix}_$this(uid)
+}
+
+method SWL_FC generate_player_uid {prefix} {
+	incr this(player_uid)
+	return ${prefix}_$this(player_uid)
 }
 
 #___________________________________________________________________________________________________________________________________________
@@ -169,7 +175,7 @@ method SWL_FC Update_planet {id D_update} {
 #__________________________________________________________________ Players ________________________________________________________________
 #___________________________________________________________________________________________________________________________________________
 method SWL_FC Add_new_player {name} {
-	set id [this generate_uid "Player"]
+	set id [this generate_player_uid "Player"]
 	dict set this(D_players) $id [dict create name $name D_ships [dict create]]
 	return $id
 }
