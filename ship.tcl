@@ -2,7 +2,11 @@ generate_pac_agent_multi_view Ship [list "Map" "MiniMap"]
 generate_pac_accessors Ship id
 generate_pac_accessors Ship position_x
 generate_pac_accessors Ship position_y
+generate_pac_accessors Ship player_id
 generate_pac_accessors Ship radius
+
+generate_pac_parent_accessors Ship kernel
+generate_pac_accessors Ship kernel
 
 generate_pac_parent_accessors Ship canvas_map
 generate_pac_parent_accessors Ship canvas_mini_map
@@ -21,7 +25,8 @@ generate_pac_presentation_accessors MiniMapShip id
 
 
 method ShipAbstraction init {} {
-    this set_id [lindex [split "$objName" "_"] 1]
+    this set_id [lindex [split "$objName" "_"] 0]
+    this set_kernel [$this(control) get_parent_kernel]
 }
 
 method ShipControl draw {} {
@@ -34,6 +39,9 @@ method ShipControl draw {} {
 method ShipControl move {x y} {
     [$this(map) attribute presentation] move $x $y
     [$this(minimap) attribute presentation] move $x $y
+    [this get_kernel] Update_ship [this get_player_id] [this get_id] \
+                                  [dict create x [expr [this get_position_x] + $x] \
+                                               y [expr [this get_position_y] + $y]]
 }
 
 method ShipControl move_left {} {
@@ -53,7 +61,8 @@ method ShipControl move_down {} {
 }
 
 method ShipControl shut {} {
-    puts "shut"
+    [this get_kernel] Update_ship [this get_player_id] [this get_id] [dict create fire_velocity 1 fire_angle 1]
+
 }
 
 
