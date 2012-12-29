@@ -35,6 +35,7 @@ method GameAbstraction init {} {
 method GameControl init {} {
     this set_players [list]
     this set_ships [list]
+    bind . <Key-space>  "$objName start_fire"
 }
 
 
@@ -71,6 +72,14 @@ method GameControl get_ship_from_player {player_id} {
 
 method GameControl get_player_from_ship {player_id} {
     return [lindex $this(players) [lsearch $this(ships) $ship_id]]
+}
+
+
+method GameControl start_fire {} {
+    foreach ship  $this(ships) {
+        $ship shut
+    }
+    [this get_kernel] Start_fire
 }
 
 
