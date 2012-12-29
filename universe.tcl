@@ -21,12 +21,10 @@ method UniverseAbstraction init {} {
     this set_kernel [$this(control) get_parent_kernel]
     $this(kernel) Subscribe_after_Add_new_planet A "$this(control) add_planet_callback \$rep \$x \$y \$radius \$density"
     $this(kernel) Subscribe_after_Add_new_ship A "$this(control) add_ship_callback \$rep \$x \$y \$radius \$id_player"
-    $this(kernel) Subscribe_after_Update_ship A "$this(control) update_ship_callback \$id_player \$id \$this(D_players)"
-    $this(kernel) Subscribe_after_Update_planet A "$this(control) update_planet_callback \$id \$D_update"
-    # $this(kernel) Subscribe_after_Update_ship A "$this(control) update_ship \$id \$D_update"
-    # $this(kernel) Subscribe_after_Start_fire A "$this(control) start_fire \$rep \$this(L_bullets)"
-    # $this(kernel) Subscribe_after_Compute_a_simulation_step A "$this(control) update_fire \$rep \$this(L_bullets)"
-    # $this(kernel) Subscribe_after_Destroy_ship A "$this(control) destroy_ship \$rep \$id"
+    $this(kernel) Subscribe_after_Start_fire A "$this(control) start_fire_callback \$rep \$this(L_bullets)"
+    $this(kernel) Subscribe_after_Compute_a_simulation_step A "$this(control) update_fire_callback \$rep \$this(L_bullets)"
+    $this(kernel) Subscribe_after_Destroy_ship A "$this(control) destroy_ship_callback \$id"
+    $this(kernel) Subscribe_after_Destroy_planet A "$this(control) destroy_planet_callback \$id"
 }
 
 # UniverseControl ##
@@ -46,16 +44,6 @@ method UniverseControl add_ship_callback {id x y radius player_id} {
     lappend this(ships) $new_ship
 }
 
-method UniverseControl update_ship_callback {player_id id D_players} {
-    set ship [this get_ship $id]
-    if {$ship != ""} {
-        $ship set_position_x  [dict get $D_players $player_id D_ships $id x]
-        $ship set_position_y [dict get $D_players $player_id D_ships $id y]
-        $ship set_radius [dict get $D_players $player_id D_ships $id radius]
-        puts "update ship : [$ship get_position_x] [$ship get_position_y]"
-    }
-}
-
 method UniverseControl add_planet_callback {id x y radius density} {
     set new_planet [PlanetControl $id $objName ""]
     $new_planet set_radius $radius
@@ -66,17 +54,29 @@ method UniverseControl add_planet_callback {id x y radius density} {
     lappend this(planets) $new_planet
 }
 
-method UniverseControl update_planet_callback {id D_update} {
-    set planet [this get_planet $id]
-    if {$planet != ""} {
-        $planet set_radius [dict get $D_update $id radius]
-        $planet set_density [dict get $D_update $id density]
-        $planet set_position_x [dict get $D_update $id x]
-        $planet set_position_y [dict get $D_update $id y]
-        puts "update planet : [$planet get_x] [$planet get_y]"
+method UniverseControl start_fire_callback {rep L_bullets} {
+    $this(map) create_bullets $rep $L_bullets
+}
+
+method UniverseControl update_fire_callback {rep L_bullets} {
+    $this(map) update_bullets $rep $L_bullets
+}
+
+method UniverseControl destroy_ship_callback {id} {
+    set ship [this get_ship $id]
+    if {$ship !=""} {
+        set this(ships) [lremove $this(ships) $ship]
+        $ship dispose
     }
 }
 
+method UniverseControl destroy_planet_callback {id} {
+    set planet [this get_planet $id]
+    if {$planet !=""} {
+        set this(planets) [lremove $this(planets) $planet]
+        $planet dispose
+    }
+}
 
 method UniverseControl get_planet {id} {
     foreach planet  $this(planets) {
@@ -100,6 +100,14 @@ method UniverseControl send_event_to_ship {event ship_id} {
 
 
 # MapUniversePresentation ##
+method MapUniverseControl create_bullets {rep L_bullets} {
+    $this(presentation) create_bullets $rep $L_bullets
+}
+
+method MapUniverseControl update_bullets {rep L_bullets} {
+    $this(presentation) update_bullets $rep $L_bullets
+}
+
 method MapUniversePresentation init {} {
     this set_num_background 0
     this set_canvas_map [$this(control) get_parent_canvas_map]
@@ -108,12 +116,26 @@ method MapUniversePresentation init {} {
     initBackground $this(canvas_map) [get_new_universe_bg]
 
     bind $this(tk_parent) <Control-Key-b> "$objName switch_background"
-
 }
 
 method MapUniversePresentation switch_background {} {
     incr this(num_background)
     initBackground $this(canvas_map) [get_new_universe_bg $this(num_background)]
+}
+
+method MapUniversePresentation create_bullets {rep L_bullets} {
+    $this(canvas_map) delete Bullet
+    set radius 10
+    foreach {id x y vx vy} $L_bullets {
+         $this(canvas_map) create oval [expr $x - $radius] [expr $y - $radius] [expr $x + $radius] [expr $y + $radius] -fill red -tags [list Bullet $id]
+    }
+}
+
+method MapUniversePresentation update_bullets {rep L_bullets} {
+    set radius 10
+    foreach {id x y vx vy} $L_bullets  {
+         $this(canvas_map) coords $id [expr $x - $radius] [expr $y - $radius] [expr $x + $radius] [expr $y + $radius]
+    }
 }
 
 
