@@ -131,17 +131,7 @@ proc loop_sound sound {
 proc get_random_planet_bg {} {
   set path [abspath ressources planet "planet[random 12].png"]
   return [image create photo -file $path]
-} 
-
-proc get_planet_img {num} {
-  return [image create photo -file [abspath ressources planet "planet${num}.png"]]
-} 
-
-proc get_random_planet {} {
-  set img [image create photo -file [abspath ressources planet "planet[random 12].png"]]
-  set height [image height $img]
-  return [list $img [expr ($height / 2)]] [expr ($height / 4)]]
-} 
+}
 
 proc get_ship_bg {name} {
   set path [abspath ressources ship "$name.png"]
