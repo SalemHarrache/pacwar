@@ -19,12 +19,12 @@ method SWL_FC constructor {} {
 #___________________________________________________________________________________________________________________________________________
 method SWL_FC generate_uid {prefix} {
 	incr this(uid)
-	return ${prefix}_$this(uid)
+	return ${prefix}$this(uid)
 }
 
 method SWL_FC generate_player_uid {prefix} {
 	incr this(player_uid)
-	return ${prefix}_$this(player_uid)
+	return ${prefix}$this(player_uid)
 }
 
 #___________________________________________________________________________________________________________________________________________
@@ -150,7 +150,7 @@ method SWL_FC Compute_a_simulation_step {} {
 #___________________________________________________________________ Planets _______________________________________________________________
 #___________________________________________________________________________________________________________________________________________
 method SWL_FC Add_new_planet {x y radius density} {
-	set id [this generate_uid "Planet"]
+	set id [this generate_uid "pt"]
 	dict set this(D_planets) $id ""
 	this Update_planet $id [dict create x $x y $y radius $radius density $density]
 	return $id
@@ -175,7 +175,7 @@ method SWL_FC Update_planet {id D_update} {
 #__________________________________________________________________ Players ________________________________________________________________
 #___________________________________________________________________________________________________________________________________________
 method SWL_FC Add_new_player {name} {
-	set id [this generate_player_uid "Player"]
+	set id [this generate_player_uid "p"]
 	dict set this(D_players) $id [dict create name $name D_ships [dict create]]
 	return $id
 }
@@ -197,7 +197,7 @@ method SWL_FC Update_player {id D_update} {
 #___________________________________________________________________________________________________________________________________________
 method SWL_FC Add_new_ship {id_player x y radius} {
 	if {![dict exists $this(D_players) $id_player]} {error "There is no player identified by $id_player\nPlayers are: $this(D_players)"}
-	set id [this generate_uid "${id_player}_Ship"]
+	set id [this generate_uid "${id_player}_s"]
 	dict set this(D_players) $id_player D_ships $id [dict create x $x y $y radius $radius energy 100 fire_velocity 0 fire_angle 0]
 	return $id
 }
