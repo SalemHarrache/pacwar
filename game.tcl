@@ -55,15 +55,10 @@ method GameControl add_player {name position_x position_y} {
     lappend this(ships) $ship_id
 }
 
-method GameControl add_planet {name position_x position_y radius density} {
-    set planet_img  
-    set planet_id [[this get_kernel] Add_new_planet $position_x $position_y 30 10]
-
+method GameControl add_planet { position_x position_y radius density} {
+    [this get_kernel] Add_new_planet $position_x $position_y $radius $density
 }
 
-method GameControl reset_ship_player {name} {
-
-}
 
 method GameControl send_event_from_player {event player_id} {
     $this(universe) send_event_to_ship $event [this get_ship_from_player $player_id]
