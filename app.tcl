@@ -30,8 +30,8 @@ proc run {} {
     SoundControl sfx_manager game ""
 
     # 2 players
-    game add_player "feisar" 50 0
-    game add_player "goteki"  90 50 
+    game add_player "feisar" 100 500
+    game add_player "goteki"  800 500 
 
     # 10 planets
     game add_planet 190 249 80 50
@@ -52,18 +52,3 @@ proc run {} {
 }
 
 run
-
-# "
-#         bind . <Left>  \"\$objName move_left\"
-#         bind . <Right> \"\$objName move_right\"
-#         bind . <Up>    \"\$objName move_up\"
-#         bind . <Down>  \"\$objName move_down\"
-#         bind . <Key-space>  \"\$objName shut\"
-#     " 
-# "
-#         bind . <q>  \"\$objName move_left\"
-#         bind . <d> \"\$objName move_right\"
-#         bind . <z>    \"\$objName move_up\"
-#         bind . <s>  \"\$objName move_down\"
-#         bind . <Shift_L>  \"\$objName shut\"
-#     "
