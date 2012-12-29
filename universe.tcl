@@ -34,9 +34,12 @@ method UniverseControl init {} {
     set this(ships) [list]
 }
 
-method UniverseControl add_ship_callback {id x y r} {
+method UniverseControl add_ship_callback {id x y radius} {
     set new_ship [ShipControl $id $objName ""]
-    $new_ship set_position $x $y
+    $new_ship set_position_x $x
+    $new_ship set_position_y $y
+    $new_ship set_radius $radius
+    $new_ship draw
     lappend this(ships) $new_ship
 }
 
