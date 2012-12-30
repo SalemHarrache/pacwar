@@ -33,7 +33,6 @@ ou avec make:
 
 
 Joueur 1:
-
  - <Left> : Se déplacer vers la gacuhe
  - <Right> : Se déplacer vers la droite
  - <Top> : Se déplacer vers le haut
