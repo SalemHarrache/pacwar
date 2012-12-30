@@ -13,10 +13,10 @@ proc abspath {arg args} {
 }
 
 # Sound
-load [abspath lib snack libsnack.so]
-load [abspath lib snack libsound.so]
-load [abspath lib snack libsnackogg.so]
-source [abspath lib snack snack.tcl]
+load [abspath .. lib snack libsnack.so]
+load [abspath .. lib snack libsound.so]
+load [abspath .. lib snack libsnackogg.so]
+source [abspath .. lib snack snack.tcl]
 
 
 # globals
@@ -123,17 +123,17 @@ proc loop_sound sound {
 
 # Images
 proc get_random_planet_bg {} {
-  set path [abspath ressources planet "planet[random 12].png"]
+  set path [abspath .. ressources planet "planet[random 12].png"]
   return [image create photo -file $path]
 }
 
 proc get_ship_bg {name} {
-  set path [abspath ressources ship "$name.png"]
+  set path [abspath .. ressources ship "$name.png"]
   return [image create photo -file $path]
 }
 
 proc get_new_universe_bg {{num 0}} {
-  set path [abspath ressources universe "universe[expr $num % 3].jpg"]
+  set path [abspath .. ressources universe "universe[expr $num % 3].jpg"]
   return [image create photo -file $path]
 }
 

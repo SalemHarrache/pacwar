@@ -34,8 +34,8 @@ method CodeP constructor {control klass method} {
 
 	set this(window) [toplevel .w_${klass}_${method}]
 	wm title $this(window) "${klass}::${method}"
-	wm protocol $this(window) WM_DELETE_WINDOW "$this(control) dispose"
-	
+	# wm protocol $this(window) WM_DELETE_WINDOW "$this(control) dispose"
+
 	text $this(window).c
 	set args [gmlObject info arglist $klass $method]
 	if {[llength $args] > 0} {
@@ -69,33 +69,33 @@ method CodeP destructor {} {
 inherit InspectP Presentation
 method InspectP constructor {control agent} {
 	this inherited $control
-	
+
 	set this(window) [toplevel .w_$control]
 	wm title $this(window) "$agent details"
-	wm protocol $this(window) WM_DELETE_WINDOW "$this(control) dispose"
+	# wm protocol $this(window) WM_DELETE_WINDOW "$this(control) dispose"
 
 	# attributes
 	pack [frame $this(window).attr] -side top -fill both
 	pack [label $this(window).attr.label -text "attributes" -bg black -fg white -anchor w -padx 2 -pady 2] -side top -fill x
-	
+
 	global $agent
 	foreach name [array names $agent] {
 		pack [frame $this(window).attr.a_$name] -side top -fill x
-		pack [label $this(window).attr.a_$name.name -text "$name: " -anchor w -padx 2] -side left 
+		pack [label $this(window).attr.a_$name.name -text "$name: " -anchor w -padx 2] -side left
 		pack [label $this(window).attr.a_$name.value -textvariable ${agent}($name) -anchor e -padx 2] -side right
 	}
-	
+
 	# methods
 	pack [frame $this(window).meth] -side top -fill both
 	pack [label $this(window).meth.label -text "methods" -bg black -fg white -anchor w -padx 2 -pady 2] -side top -fill x
 	set classes [gmlObject info classes $agent]
-	
+
 	foreach klass $classes {
 		pack [frame $this(window).meth.h_$klass -bg grey -padx 2 -pady 2] -side top -fill x
 		pack [label $this(window).meth.h_$klass.name -text "${klass}::" -bg grey -anchor w] -side left -fill x
 		pack [label $this(window).meth.h_$klass.show -text "show" -bd 2 -relief raise] -side right
 		bind $this(window).meth.h_$klass.show <1> "$objName show $klass show"
-		
+
 		frame $this(window).meth.c_$klass
 		foreach {m c name a} [gmlObject info interface $klass] {
 			pack [frame $this(window).meth.c_$klass.m_$name -padx 1] -side top -fill x
@@ -104,9 +104,9 @@ method InspectP constructor {control agent} {
 			set args [gmlObject info args $klass $name]
 			pack [label $this(window).meth.c_$klass.m_$name.value -text "$args" -fg #777 -anchor nw] -side right -fill x
 		}
-	}	
+	}
 	this show [lindex $classes 0]
-	
+
 	# delay
 	pack [frame $this(window).delay] -side top -fill both
 	pack [label $this(window).delay.label -text "delay" -bg black -fg white -anchor w -padx 2 -pady 2] -side top -fill x
@@ -133,7 +133,7 @@ method InspectP show {klass {show "show"}} {
 		pack forget $this(window).meth.c_$klass
 		set show "show"
 	}
-	
+
 	$this(window).meth.h_$klass.show configure -text $show
 	bind $this(window).meth.h_$klass.show <1> "$objName show $klass $show"
 }
@@ -160,7 +160,7 @@ method InspectP destructor {} {
 inherit IntrospactA Abstraction
 method IntrospactA constructor {control {agent ""}} {
 	this inherited $control
-	
+
 	set this(agent) ""
 	this attach $agent
 }
@@ -185,7 +185,7 @@ method IntrospactA detach {} {
 
 method IntrospactA wrap {agent {action add}} {
 	if {$agent == ""} return
-	
+
 	# depth first traversal
 	foreach child [$agent attribute children] {
 		this wrap $child $action
@@ -209,13 +209,13 @@ method IntrospactA trace_facet {facet action} {
 		trace $action execution $facet "enter leave" "$objName manage_call_stack"
 	}
 }
-	
+
 method IntrospactA manage_geometry {args} {
 	set agent $this(agent)
-	
+
 	this detach
 	$this(control) display
-	this attach $agent	
+	this attach $agent
 }
 
 method IntrospactA manage_call_stack {args} {
@@ -225,11 +225,11 @@ method IntrospactA manage_call_stack {args} {
 	set target [lindex $cmd 0]
 	set method [lindex $cmd 1]
 	set margs [lrange $cmd 2 end]
-	
+
 	if {($target == $this(agent)) && ($method == "dispose")	&& ($op == "enter")} {
 		$this(control) detach
 	}
-	
+
 	# special cases
 	switch $method {
 		attribute {
@@ -241,10 +241,10 @@ method IntrospactA manage_call_stack {args} {
 			if {[gmlObject info exists object $inspect_name]} {
 				$inspect_name dispose
 			}
-			return	
+			return
 		}
 	}
-	
+
 	# general cases
 	switch $op {
 		enter {
@@ -252,7 +252,7 @@ method IntrospactA manage_call_stack {args} {
 			set this(call_stack) [linsert $this(call_stack) 0 $target]
 			$this(control) render_enter $caller $target $method $margs [llength $this(call_stack)]
 		}
-		leave { 
+		leave {
 			$this(control) render_leave [llength $this(call_stack)]
 			set this(call_stack) [lrange $this(call_stack) 1 end]
 		}
@@ -274,30 +274,30 @@ method IntrospactP constructor {control {agent ""}} {
 	# window
 	set this(window) [toplevel .w_$control]
 	wm protocol $this(window) WM_DELETE_WINDOW "$control dispose"
-	
+
 	# pause/stop buttons
 	pack [frame $this(window).pause] -side top -fill x
 	pack [checkbutton $this(window).pause.c -text "pause" -variable __pause] -side left
 	pack [button $this(window).pause.s -text ">" -command {incr __pause_signal}] -side right
-	
+
 	# canvas & scrollbars
 	frame $this(window).f
-	
+
 	set this(canvas) [canvas $this(window).f.c]
 
 	scrollbar $this(window).f.v -orient vertical -command "$this(canvas) yview"
 	scrollbar $this(window).f.h -orient horizontal -command "$this(canvas) xview"
 	$this(canvas) configure -yscrollcommand "$this(window).f.v set" \
 	                        -xscrollcommand "$this(window).f.h set"
-	
+
 	grid rowconfigure $this(window).f 0 -weight 1
 	grid columnconfigure $this(window).f 0 -weight 1
 	grid $this(canvas) -row 0 -column 0 -sticky "nsew"
 	grid $this(window).f.v -row 0 -column 1 -sticky "ns"
 	grid $this(window).f.h -row 1 -column 0 -sticky "ew"
-	
+
 	pack $this(window).f -fill both -expand true -side bottom
-	
+
 	# attach to PAC agent
 	this attach $agent
 }
@@ -334,11 +334,11 @@ method IntrospactP display {} {
 
 method IntrospactP render {agent {level 0}} {
 	if {$this(agent) == ""} return
-	
-	if {$level == 0} { 
-		set this(x) 0 
+
+	if {$level == 0} {
+		set this(x) 0
 	}
-	
+
 	foreach child [$agent attribute children] {
 		this render $child [expr $level+1]
 	}
@@ -360,7 +360,7 @@ method IntrospactP render_agent {agent level} {
 	}
 
 	set y [expr $level * $level_height + 50]
-	
+
 	# abstraction, presentation
 	foreach {facet dx dxt label} {abstraction -40 -2 A presentation 40 2 P} {
 		set facet [$agent attribute $facet]
@@ -384,7 +384,7 @@ method IntrospactP render_agent {agent level} {
 	$this(canvas) create oval $x0 $y0 $x1 $y1 -fill white -tags "$agent child_$parent oval_$agent"
 	$this(canvas) create text $x $y -text $agent -tags "$agent text_$agent"
 	this bind $agent
-	
+
 	# links to the children
 	foreach child [$this(canvas) find withtag child_$agent] {
 		set cbbox [$this(canvas) coords $child]
@@ -410,24 +410,24 @@ method IntrospactP inspect {agent} {
 
 method IntrospactP render_enter {caller target method args depth} {
 	set callerid [$this(canvas) find withtag oval_$caller]
-	set targetid [$this(canvas) find withtag oval_$target]	
+	set targetid [$this(canvas) find withtag oval_$target]
 
 	# render call
 	set tbbox [$this(canvas) bbox $targetid]
 	if {$tbbox == ""} return
-	
+
 	set xt [center $tbbox x]
 	set yt [center $tbbox y]
-	
+
 	if {$callerid == $targetid} {
 		set yc [expr $yt - 20]
-		set xc $xt	
+		set xc $xt
 		set coords [list $xt $yt [expr $xt-20] $yc [expr $xt+20] $yc $xt $yt]
 	} else {
 		if {$callerid != ""} {
 			set cbbox [$this(canvas) bbox $callerid]
 			set xc [center $cbbox x]
-			set yc [center $cbbox y]	
+			set yc [center $cbbox y]
 		} else {
 			set xc [expr $xt + 40]
 			set yc [expr $yt - 30]
@@ -441,7 +441,7 @@ method IntrospactP render_enter {caller target method args depth} {
 	$this(canvas) itemconfigure arrow -width 1
 	$this(canvas) create line $coords -arrow last -fill red -smooth 1 -tags "call_$depth arrow" -width 2
 	$this(canvas) create text [expr $xt+10] [expr $yt+10] -fill blue -text "$method $args" -tags call_text -anchor nw
-	
+
 	# delay
 	global __pause
 	if {$__pause} {
@@ -473,7 +473,7 @@ proc delay {agent} {
 			return $__delay(delay,$agent)
 		}
 	}
-	
+
 	# delay not set: find containing agent delay
 	global $agent
 	if {[info exists ${agent}(parent)]} {
@@ -481,7 +481,7 @@ proc delay {agent} {
 	} else {
 		set parent [$agent attribute control]
 	}
-	
+
 	if {$parent == ""} {
 		return 0
 	} else {
@@ -500,7 +500,7 @@ method Introspact constructor {{agent ""} {parent ""}} {
 	IntrospactP ${objName}_pres $objName
 	this inherited $parent ${objName}_abst ${objName}_pres
 
-	this attach $agent	
+	this attach $agent
 }
 
 method Introspact destructor {} {

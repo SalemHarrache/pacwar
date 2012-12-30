@@ -74,7 +74,8 @@ method ShipControl shut {} {
 # Map
 method MapShipPresentation init {} {
     this set_canvas_map [$this(control) get_parent_canvas_map]
-    this set_bg_image [get_ship_bg [$this(control) get_parent_id]]
+    set num [expr (([lindex [split [$this(control) get_parent_id] ""] 1]) % 2)]
+    this set_bg_image [get_ship_bg "s$num"]
 }
 
 method MapShipPresentation draw {x y radius} {

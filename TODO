@@ -1,8 +1,0 @@
-- Mise a jour des données du noyaux -> OK
-- Colisions lors des deplacement des vaisseaux -> On ne fait pas pour le vaisseau
-- Un vaisseau vise vers le bas et l'autre vers le haut (pour qu'il y a combat) -> Non tous vise en base xD
-- (car on ne gere pas de rotation du vaisseau) -> ...
-- Shut !! -> OK
-- Clean le code
-- Mettre un place un scénario de demo à montrer au prof
-

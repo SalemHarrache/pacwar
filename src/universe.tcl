@@ -126,7 +126,7 @@ method MiniMapUniversePresentation init {} {
     this set_canvas_mini_map [$this(control) get_parent_canvas_mini_map]
     $this(canvas_mini_map) configure -width 200 -height 200 -background "#1E1E1E"
 
-    set background_file [abspath ressources universe background_mini.jpg]
+    set background_file [abspath .. ressources universe background_mini.jpg]
     set background [image create photo -file $background_file]
     $this(canvas_mini_map) create image 0 0 -anchor nw -image $background
 

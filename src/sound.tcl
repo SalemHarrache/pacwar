@@ -11,8 +11,8 @@ generate_pac_accessors "Sound" volume
 
 
 method SoundAbstraction init {} {
-    this set_battle_sound [snack::sound battle_sound -file [abspath ressources sound battle.mp3]]
-    this set_end_sound [snack::sound end_sound -file [abspath ressources sound end.mp3]]
+    this set_battle_sound [snack::sound battle_sound -file [abspath .. ressources sound battle.mp3]]
+    this set_end_sound [snack::sound end_sound -file [abspath .. ressources sound end.mp3]]
     this set_mode "battle"
     this mute
 }

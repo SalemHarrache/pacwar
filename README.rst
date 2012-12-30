@@ -2,14 +2,14 @@ PACWar
 ======
 
 
-Dépendances
------------
+Installation
+------------
 
 Ubuntu :
 
 ::
 
-    sudo apt-get install libtk-img
+    sudo apt-get install tcl8.5 tk8.5 libtk-img
 
 
 Usage
@@ -18,11 +18,10 @@ Usage
 Pour lancer le jeu utiliser le script main app.tcl
 
 ::
-
-  ./app.tcl
-
-pour lancer le jeu avec introspact:
-
-:
-
+  cd src
   ./app.tcl introspac
+
+ou avec make
+
+::
+  make

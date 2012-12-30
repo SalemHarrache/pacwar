@@ -1,5 +1,5 @@
 #
 # Makefile PakWar
 #
-app: app.tcl
-	./app.tcl introspac
+app:
+	cd src; ../lib/tkcon.tcl ./app.tcl introspac
