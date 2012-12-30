@@ -16,7 +16,7 @@ generate_pac_presentation_accessors MapUniverse num_background
 generate_pac_presentation_accessors MiniMapUniverse canvas_mini_map
 
 
-# UniverseAbstraction ##
+# UniverseAbstraction
 method UniverseAbstraction init {} {
     this set_kernel [$this(control) get_parent_kernel]
     $this(kernel) Subscribe_after_Add_new_planet A "$this(control) add_planet_callback \$rep \$x \$y \$radius \$density"
@@ -27,7 +27,7 @@ method UniverseAbstraction init {} {
     $this(kernel) Subscribe_after_Destroy_planet A "$this(control) destroy_planet_callback \$id"
 }
 
-# UniverseControl ##
+# UniverseControl
 method UniverseControl init {} {
     $this(parent) set_universe $objName
     set this(ships) [dict create]
@@ -74,13 +74,12 @@ method UniverseControl destroy_planet_callback {id} {
     $planet dispose
 }
 
-
 method UniverseControl send_event_to_ship {event ship_id} {
     [dict get $this(ships) $ship_id] $event
 }
 
 
-# MapUniversePresentation ##
+# MapUniverseControl ##
 method MapUniverseControl create_bullets {rep L_bullets} {
     $this(presentation) create_bullets $rep $L_bullets
 }
@@ -89,6 +88,8 @@ method MapUniverseControl update_bullets {rep L_bullets} {
     $this(presentation) update_bullets $rep $L_bullets
 }
 
+
+# MapUniversePresentation ##
 method MapUniversePresentation init {} {
     this set_num_background 0
     this set_canvas_map [$this(control) get_parent_canvas_map]

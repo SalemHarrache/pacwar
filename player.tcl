@@ -30,7 +30,7 @@ method PlayerPresentation set_status {v} {
 }
 
 method PlayerControl set_binding {} {
-    eval [get_[this get_id]_control]
+    eval [get_p[expr ([lindex [split [this get_id] ""] 1] % 2) + 1]_control]
 }
 
 method PlayerControl send_event {event} {

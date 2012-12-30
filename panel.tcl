@@ -31,7 +31,6 @@ method PanelControl sound_changed {v} {
 method PanelControl add_player_callback {id name} {
     set new_player [PlayerControl ${id}_${name} $objName [$this(presentation) get_new_player_frame]]
     $new_player set_binding
-    puts "$id $new_player"
     dict set this(players) [$new_player get_id] $new_player
     $this(presentation) refresh
 }

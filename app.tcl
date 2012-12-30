@@ -32,6 +32,7 @@ proc run {} {
     # 2 players
     game add_player "feisar" 300 500
     game add_player "goteki"  200 100
+    game add_player "rastar"  400 500
 
     # 10 planets
     game add_planet 190 249 80 50

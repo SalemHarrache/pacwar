@@ -27,23 +27,22 @@ generate_pac_presentation_accessors Game display_mode
 generate_pac_presentation_accessors Game mute
 
 
+# Abstraction  ##
 method GameAbstraction init {} {
     this set_kernel [SWL_FC kernel]
     $this(kernel) Subscribe_after_Destroy_ship $objName "$this(control) destroy_ship_callback \$id"
 }
 
-
+# Control  ##
 method GameControl init {} {
     this set_players [dict create]
     this set_ships [dict create]
     bind . <Key-space>  "$objName start_fire"
 }
 
-
 method GameControl toggle_sound {} {
     $this(sfx_manager) toggle_sound
 }
-
 
 method GameControl sound_changed {v} {
     $this(panel) sound_changed $v
@@ -67,17 +66,12 @@ method GameControl send_event_from_player {event player_id} {
     $this(universe) send_event_to_ship $event $ship_id
 }
 
-method GameControl send_event_to_player {event player_id} {
-    $this(panel) send_event_to_player $event $player_id
-}
-
 method GameControl destroy_ship_callback {ship_id} {
     set player_id [dict get $this(ships) $ship_id]
     [this get_kernel] Destroy_player $player_id
     set this(ships) [dict remove $this(ships) $ship_id]
     set this(players) [dict remove $this(players) $player_id]
 }
-
 
 method GameControl start_fire {} {
     foreach {ship_id player}  $this(ships) {
@@ -87,6 +81,7 @@ method GameControl start_fire {} {
 }
 
 
+# Presentation  ##
 method GamePresentation init {} {
     wm aspect $this(tk_parent) 3 2 3 2
     wm title $this(tk_parent) "PacWar !"
