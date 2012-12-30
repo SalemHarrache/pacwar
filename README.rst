@@ -23,7 +23,7 @@ Pour lancer le jeu utiliser le script main `app.tcl`:
 
 ::
 
-  cd src; ./app.tcl introspac
+  cd src; wish ./app.tcl introspac
 
 ou avec make:
 
