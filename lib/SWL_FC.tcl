@@ -79,7 +79,7 @@ method SWL_FC Collision_with_planets {x y} {
 		 set distance [expr sqrt($DX * $DX + $DY * $DY)]
 		 if {$distance <= [dict get $D_planet radius]} {
 		 	 # remove the ship
-			 this Destroy_planet $id_planet
+			 # this Destroy_planet $id_planet
 			 return 1
 			}
 		}
