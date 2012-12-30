@@ -21,6 +21,7 @@ source [abspath .. lib snack snack.tcl]
 
 # globals
 set pi [expr 4 * atan(1)]
+set num_planet_bg 0
 
 proc to_radian {deg} {
   global pi
@@ -121,9 +122,12 @@ proc loop_sound sound {
     eval $cmd
 }
 
+
 # Images
 proc get_random_planet_bg {} {
-  set path [abspath .. ressources planet "planet[random 12].png"]
+  global num_planet_bg
+  set path [abspath .. ressources planet "planet[expr $num_planet_bg % 12].png"]
+  incr num_planet_bg
   return [image create photo -file $path]
 }
 

@@ -18,6 +18,7 @@ generate_pac_presentation_accessors MiniMapPlanet canvas_mini_map
 generate_pac_presentation_accessors MapPlanet id
 generate_pac_presentation_accessors MiniMapPlanet id
 
+generate_pac_parent_accessors MapPlanet id
 
 # Abstraction
 method PlanetAbstraction init {} {
