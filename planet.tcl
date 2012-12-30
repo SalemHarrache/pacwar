@@ -5,9 +5,6 @@ generate_pac_accessors Planet position_y
 generate_pac_accessors Planet radius
 generate_pac_accessors Planet density
 
-generate_pac_parent_accessors Planet kernel
-generate_pac_accessors Planet kernel
-
 generate_pac_parent_accessors Planet canvas_map
 generate_pac_parent_accessors Planet canvas_mini_map
 
@@ -22,23 +19,20 @@ generate_pac_presentation_accessors MapPlanet id
 generate_pac_presentation_accessors MiniMapPlanet id
 
 
-
 method PlanetAbstraction init {} {
     this set_id [lindex [split "$objName" "_"] 0]
-    this set_kernel [$this(control) get_parent_kernel]
 }
+
 
 method PlanetControl draw {} {
-    [$this(map) attribute presentation] draw [this get_position_x] [this get_position_y] [this get_radius]
-    [$this(minimap) attribute presentation] draw [expr ([this get_position_x] / 10)] \
-                                                 [expr ([this get_position_y] / 10)] \
-                                                 [expr ([this get_radius] / 10)]
+    $this(map) draw [this get_position_x] [this get_position_y] [this get_radius]
+    $this(minimap) draw [this get_position_x] [this get_position_y] [this get_radius]
 }
 
-method PlanetControl update {id D_update} {
 
+method MapPlanetControl draw {x y radius} {
+    $this(presentation) draw $x $y $radius
 }
-
 
 method MapPlanetPresentation init {} {
     this set_bg_image [get_random_planet_bg]
@@ -55,6 +49,13 @@ method MapPlanetPresentation delete {} {
 
 method MapPlanetPresentation destructor {} {
     this delete
+}
+
+
+method MiniMapPlanetControl draw {x y radius} {
+    $this(presentation) draw [expr ($x / 10)] \
+                             [expr ($y / 10)] \
+                             [expr ($radius / 10)]
 }
 
 method MiniMapPlanetPresentation init {} {
