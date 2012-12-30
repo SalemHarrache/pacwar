@@ -1,40 +1,46 @@
 # Génération d'un agent Panel
-generate_pac_agent "Panel"
+generate_pac_agent Panel
 
-generate_pac_parent_accessors "Panel" kernel
-generate_pac_accessors "Panel" kernel
+generate_pac_parent_accessors Panel kernel
+generate_pac_parent_accessors Panel frame_panel
 
-generate_pac_accessors "Panel" volume_level
+generate_pac_accessors Panel kernel
+generate_pac_accessors Panel volume_level
 
-generate_pac_presentation_accessors "Panel" frame_panel
-generate_pac_parent_accessors "Panel" frame_panel
+generate_pac_presentation_accessors Panel frame_panel
 
 
-# UniverseAbstraction ##
+# Abstraction
 method PanelAbstraction init {} {
     this set_kernel [$this(control) get_parent_kernel]
-    $this(kernel) Subscribe_after_Add_new_player A "$this(control) add_player_callback \$rep \$name"
+    $this(kernel) Subscribe_after_Add_new_player $objName "$this(control) add_player_callback \$rep \$name"
+    $this(kernel) Subscribe_after_Destroy_player $objName "$this(control) remove_player_callback \$id"
 }
 
 
+# Controler
 method PanelControl init {} {
      $this(parent) set_panel $objName
-     set this(players) [list]
+     set this(players) [dict create]
 }
-
 
 method PanelControl sound_changed {v} {
     this user_change_volume_level $v
 }
 
-
 method PanelControl add_player_callback {id name} {
     set new_player [PlayerControl ${id}_${name} $objName [$this(presentation) get_new_player_frame]]
     $new_player set_binding
-    lappend this(players) $new_player
+    puts "$id $new_player"
+    dict set this(players) [$new_player get_id] $new_player
     $this(presentation) refresh
 }
 
+method PanelControl remove_player_callback {id} {
+    set player [dict get $this(players) $id]
+    set this(players) [dict remove $this(players) $id]
+    $player user_change_status 0
+}
 
 method PanelControl get_player {id} {
     foreach player  $this(players) {
@@ -44,11 +50,12 @@ method PanelControl get_player {id} {
     }
 }
 
-
 method PanelControl send_event_from_player {event id} {
     $this(parent) send_event_from_player $event $id
 }
 
+
+# Presentation
 method PanelPresentation init {} {
     this set_frame_panel [$this(control) get_parent_frame_panel]
     set this(player_frames) {}
@@ -56,13 +63,11 @@ method PanelPresentation init {} {
     this refresh
 }
 
-
 method PanelPresentation get_new_player_frame {} {
     set new_frame [frame $this(frame_panel).frame_[llength $this(player_frames)]]
     lappend this(player_frames) $new_frame
     return $new_frame
 }
-
 
 method PanelPresentation refresh {} {
     pack forget $this(volume_label)
