@@ -4,6 +4,7 @@ PACWar
 Projet IHM RICM5 utilisant le modèle de conception/programmation PAC.
 
 .. image:: http://i.imgur.com/HqA1M.png
+    :align: center
 
 Installation
 ------------
@@ -18,12 +19,14 @@ Ubuntu :
 Usage
 -----
 
-Pour lancer le jeu utiliser le script main `app.tcl`
+Pour lancer le jeu utiliser le script main `app.tcl`:
 
 ::
+
   cd src; ./app.tcl introspac
 
-ou avec make
+ou avec make:
 
 ::
+
   make
