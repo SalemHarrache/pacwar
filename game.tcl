@@ -29,12 +29,13 @@ generate_pac_presentation_accessors Game mute
 
 method GameAbstraction init {} {
     this set_kernel [SWL_FC kernel]
+    $this(kernel) Subscribe_after_Destroy_ship $objName "$this(control) destroy_ship_callback \$id"
 }
 
 
 method GameControl init {} {
-    this set_players [list]
-    this set_ships [list]
+    this set_players [dict create]
+    this set_ships [dict create]
     bind . <Key-space>  "$objName start_fire"
 }
 
@@ -52,8 +53,8 @@ method GameControl sound_changed {v} {
 method GameControl add_player {name position_x position_y} {
     set player_id [[this get_kernel] Add_new_player $name]
     set ship_id [[this get_kernel] Add_new_ship $player_id $position_x $position_y 50]
-    lappend this(players) $player_id
-    lappend this(ships) $ship_id
+    dict set this(players) $player_id $ship_id
+    dict set this(ships) $ship_id $player_id
 }
 
 method GameControl add_planet { position_x position_y radius density} {
@@ -62,22 +63,21 @@ method GameControl add_planet { position_x position_y radius density} {
 
 
 method GameControl send_event_from_player {event player_id} {
-    set ship_id [this get_ship_from_player $player_id]
+    set ship_id [dict get $this(players) $player_id]
     $this(universe) send_event_to_ship $event $ship_id
 }
 
-method GameControl get_ship_from_player {player_id} {
-    return [lindex $this(ships) [lsearch $this(players) $player_id]]
-}
-
-method GameControl get_player_from_ship {player_id} {
-    return [lindex $this(players) [lsearch $this(ships) $ship_id]]
+method GameControl destroy_ship_callback {ship_id} {
+    # set player_id [this get_player_from_player $ship_id]
+    # set ship_id [[this get_kernel] Add_new_ship $player_id 0 0 50]
+    # lappend this(ships) $ship_id
+    puts "GameControl destroy_ship_callback"
 }
 
 
 method GameControl start_fire {} {
-    foreach ship  $this(ships) {
-        $ship shut
+    foreach {ship_id player}  $this(ships) {
+        $this(universe) send_event_to_ship "shut" $ship_id
     }
     [this get_kernel] Start_fire
 }
