@@ -67,11 +67,15 @@ method GameControl send_event_from_player {event player_id} {
     $this(universe) send_event_to_ship $event $ship_id
 }
 
+method GameControl send_event_to_player {event player_id} {
+    $this(panel) send_event_to_player $event $player_id
+}
+
 method GameControl destroy_ship_callback {ship_id} {
-    # set player_id [this get_player_from_player $ship_id]
-    # set ship_id [[this get_kernel] Add_new_ship $player_id 0 0 50]
-    # lappend this(ships) $ship_id
-    puts "GameControl destroy_ship_callback"
+    set player_id [dict get $this(ships) $ship_id]
+    [this get_kernel] Destroy_player $player_id
+    set this(ships) [dict remove $this(ships) $ship_id]
+    set this(players) [dict remove $this(players) $player_id]
 }
 
 
