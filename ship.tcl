@@ -61,8 +61,13 @@ method ShipControl move_down {} {
     this move 0 1
 }
 
+method ShipControl get_fire_angle {} {
+    return [to_radian [expr ([lindex [split [this get_id] ""] 1] % 2) * 180 + 90]]
+}
+
 method ShipControl shut {} {
-    [this get_kernel] Update_ship [this get_player_id] [this get_id] [dict create fire_velocity 10 fire_angle [to_radian 90]]
+    [this get_kernel] Update_ship [this get_player_id] [this get_id] \
+        [dict create fire_velocity 10 fire_angle [this get_fire_angle]]
 }
 
 
