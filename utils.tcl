@@ -12,7 +12,14 @@ proc abspath {arg args} {
     eval $cmd
 }
 
-#### globals
+# Sound
+load [abspath lib snack libsnack.so]
+load [abspath lib snack libsound.so]
+load [abspath lib snack libsnackogg.so]
+source [abspath lib snack snack.tcl]
+
+
+# globals
 set pi [expr 4 * atan(1)]
 
 proc to_radian {deg} {
@@ -20,12 +27,7 @@ proc to_radian {deg} {
   return [expr ($pi * $deg)/ 180]
 }
 
-# # Sound
-load [abspath lib snack libsnack.so]
-load [abspath lib snack libsound.so]
-load [abspath lib snack libsnackogg.so]
-source [abspath lib snack snack.tcl]
-
+# utils
 proc lremove {liste quoi} {
     return [lsearch -all -inline -not -exact $liste $quoi]
 }
@@ -94,19 +96,7 @@ proc get_random_color {} {
     return [format "#%02x%02x%02x" $r $g $b]
 }
 
-# operateur
-proc - {num1 num2} {
-    return [expr {$num1 - $num2}]
-}
-proc + {num1 num2} {
-    return [expr {$num1 + $num2}]
-}
-proc * {num1 num2} {
-    return [expr {$num1 * $num2}]
-}
-proc / {num1 num2} {
-    return [expr {$num1 / $num2}]
-}
+# path
 proc cos {angle} {
     return [expr cos($angle)]
 }
@@ -225,7 +215,7 @@ proc Add_propagation {c m} {
 
 
 # Cette fonction génère les classes PAC pour un agent donné
-proc generate_pac_agent {agent {abstraction 1} {presentation 1} {control 1}} {
+proc generate_pac_agent {agent {abstraction 1} {presentation 1}} {
   set cmd ""
   if {$abstraction == 1} {
       append cmd "
@@ -255,53 +245,51 @@ proc generate_pac_agent {agent {abstraction 1} {presentation 1} {control 1}} {
       method ${agent}Presentation destructor {} {
       }"
   }
-  if {$control == 1} {
+  append cmd "
+  inherit ${agent}Control Control
+
+  # ${agent} Control --
+  method ${agent}Control init {} {}
+
+  method ${agent}Control constructor {{parent \"\"} {tk_parent \"\"}} {
+  "
+  if {$abstraction == 1} {
+    if {$presentation == 1} {
       append cmd "
-      inherit ${agent}Control Control
-
-      # ${agent} Control --
-      method ${agent}Control init {} {}
-
-      method ${agent}Control constructor {{parent \"\"} {tk_parent \"\"}} {
+      ${agent}Presentation \${objName}_pres \$objName \$tk_parent
+      ${agent}Abstraction \${objName}_abst \$objName
+      this inherited \$parent \${objName}_abst \${objName}_pres
+      this init
+      \${objName}_abst init
+      \${objName}_pres init
       "
-      if {$abstraction == 1} {
-        if {$presentation == 1} {
-          append cmd "
-          ${agent}Presentation \${objName}_pres \$objName \$tk_parent
-          ${agent}Abstraction \${objName}_abst \$objName
-          this inherited \$parent \${objName}_abst \${objName}_pres
-          this init
-          \${objName}_abst init
-          \${objName}_pres init
-          "
-        } else {
-          append cmd "
-          ${agent}Abstraction \${objName}_abst \$objName
-          this inherited \$parent \${objName}_abst \"\"
-          this init
-          \${objName}_abst init
-          "
-        }
-      } else {
-        if {$presentation == 1} {
-          append cmd "
-          ${agent}Presentation \${objName}_pres \$objName \$tk_parent
-          this inherited \$parent \"\" \${objName}_pres
-          this init
-          \${objName}_pres init
-          "
-        } else {
-          append cmd "
-          this inherited \$parent \"\" \"\"
-          this init
-          "
-        }
-      }
+    } else {
       append cmd "
-      }
-      method ${agent}Control destructor {} {
-      }"
+      ${agent}Abstraction \${objName}_abst \$objName
+      this inherited \$parent \${objName}_abst \"\"
+      this init
+      \${objName}_abst init
+      "
+    }
+  } else {
+    if {$presentation == 1} {
+      append cmd "
+      ${agent}Presentation \${objName}_pres \$objName \$tk_parent
+      this inherited \$parent \"\" \${objName}_pres
+      this init
+      \${objName}_pres init
+      "
+    } else {
+      append cmd "
+      this inherited \$parent \"\" \"\"
+      this init
+      "
+    }
   }
+  append cmd "
+  }
+      method ${agent}Control destructor {} {
+  }"
   # puts $cmd
   eval $cmd
 }
@@ -310,9 +298,9 @@ proc generate_pac_agent {agent {abstraction 1} {presentation 1} {control 1}} {
 proc generate_pac_agent_multi_view {agent views} {
   foreach name $views {
       # generate pac agent without abstraction
-      generate_pac_agent ${name}${agent} 0 1 1
+      generate_pac_agent ${name}${agent} 0 1
   }
-  generate_pac_agent ${agent} 1 0 1
+  generate_pac_agent ${agent} 1 0
   set cmd ""
   append cmd "
   method ${agent}Control constructor {{parent \"\"} {tk_parent \"\"}} {
@@ -332,7 +320,6 @@ proc generate_pac_agent_multi_view {agent views} {
 proc generate_pac_accessors {agent var {propagate 0}} {
 
   set cmd ""
-
 
   # Generates accessors for the control facet $C
   if {[is_defined "${agent}Control"]} {
@@ -417,16 +404,18 @@ proc generate_simple_accessors {class var} {
 
 proc get_p1_control {} {
     return "
-        bind . <Left>  \"\$objName move_left\"
-        bind . <Right> \"\$objName move_right\"
-        bind . <Up>    \"\$objName move_up\"
-        bind . <Down>  \"\$objName move_down\"
+        bind . <Left>  \"\$objName send_event move_left\"
+        bind . <Right> \"\$objName send_event move_right\"
+        bind . <Up>    \"\$objName send_event move_up\"
+        bind . <Down>  \"\$objName send_event move_down\"
     "
 }
 
 proc get_p2_control {} {
-    return  " bind . <q>  \"\$objName move_left\"
-              bind . <d> \"\$objName move_right\"
-              bind . <z>    \"\$objName move_up\"
-              bind . <s>  \"\$objName move_down\""
+    return  "
+        bind . <q>  \"\$objName send_event move_left\"
+        bind . <d> \"\$objName send_event move_right\"
+        bind . <z>    \"\$objName send_event move_up\"
+        bind . <s>  \"\$objName send_event move_down\"
+    "
 }
