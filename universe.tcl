@@ -64,13 +64,13 @@ method UniverseControl update_fire_callback {rep L_bullets} {
 
 method UniverseControl destroy_ship_callback {id} {
     set ship [dict get $this(ships) $id]
-    dict remove $this(ships) $id
+    set this(ships) [dict remove $this(ships) $id]
     $ship dispose
 }
 
 method UniverseControl destroy_planet_callback {id} {
     set planet [dict get $this(planets) $id]
-    dict remove $this(planets) $id
+    set this(planets) [dict remove $this(planets) $id]
     $planet dispose
 }
 
