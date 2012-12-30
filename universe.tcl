@@ -30,8 +30,8 @@ method UniverseAbstraction init {} {
 # UniverseControl ##
 method UniverseControl init {} {
     $this(parent) set_universe $objName
-    set this(ships) [list]
-    set this(planets) [list]
+    set this(ships) [dict create]
+    set this(planets) [dict create]
 }
 
 method UniverseControl add_ship_callback {id x y radius player_id} {
@@ -41,7 +41,7 @@ method UniverseControl add_ship_callback {id x y radius player_id} {
     $new_ship set_radius $radius
     $new_ship set_player_id $player_id
     $new_ship draw
-    lappend this(ships) $new_ship
+    dict set this(ships) [$new_ship get_id] $new_ship
 }
 
 method UniverseControl add_planet_callback {id x y radius density} {
@@ -51,7 +51,7 @@ method UniverseControl add_planet_callback {id x y radius density} {
     $new_planet set_position_x $x
     $new_planet set_position_y $y
     $new_planet draw
-    lappend this(planets) $new_planet
+    dict set this(planets) [$new_planet get_id] $new_planet
 }
 
 method UniverseControl start_fire_callback {rep L_bullets} {
@@ -63,39 +63,20 @@ method UniverseControl update_fire_callback {rep L_bullets} {
 }
 
 method UniverseControl destroy_ship_callback {id} {
-    set ship [this get_ship $id]
-    if {$ship !=""} {
-        set this(ships) [lremove $this(ships) $ship]
-        $ship dispose
-    }
+    set ship [dict get $this(ships) $id]
+    dict remove $this(ships) $id
+    $ship dispose
 }
 
 method UniverseControl destroy_planet_callback {id} {
-    set planet [this get_planet $id]
-    if {$planet !=""} {
-        set this(planets) [lremove $this(planets) $planet]
-        $planet dispose
-    }
+    set planet [dict get $this(planets) $id]
+    dict remove $this(planets) $id
+    $planet dispose
 }
 
-method UniverseControl get_planet {id} {
-    foreach planet  $this(planets) {
-        if {[$planet get_id] == $id} {
-            return $planet
-        }
-    }
-}
-
-method UniverseControl get_ship {id} {
-    foreach ship  $this(ships) {
-        if {[$ship get_id] == $id} {
-            return $ship
-        }
-    }
-}
 
 method UniverseControl send_event_to_ship {event ship_id} {
-    [this get_ship $ship_id] $event
+    [dict get $this(ships) $ship_id] $event
 }
 
 
@@ -125,14 +106,14 @@ method MapUniversePresentation switch_background {} {
 
 method MapUniversePresentation create_bullets {rep L_bullets} {
     $this(canvas_map) delete Bullet
-    set radius 10
+    set radius 5
     foreach {id x y vx vy} $L_bullets {
          $this(canvas_map) create oval [expr $x - $radius] [expr $y - $radius] [expr $x + $radius] [expr $y + $radius] -fill red -tags [list Bullet $id]
     }
 }
 
 method MapUniversePresentation update_bullets {rep L_bullets} {
-    set radius 10
+    set radius 5
     foreach {id x y vx vy} $L_bullets  {
          $this(canvas_map) coords $id [expr $x - $radius] [expr $y - $radius] [expr $x + $radius] [expr $y + $radius]
     }
