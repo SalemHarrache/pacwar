@@ -3,8 +3,6 @@ generate_pac_accessors Player id
 generate_pac_accessors Player name
 generate_pac_accessors Player status
 generate_pac_accessors Player position
-generate_pac_parent_accessors Player kernel
-generate_pac_parent_accessors Player frame_panel
 
 
 method PlayerAbstraction init {} {

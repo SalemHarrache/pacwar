@@ -4,29 +4,21 @@ generate_pac_accessors Ship position_x
 generate_pac_accessors Ship position_y
 generate_pac_accessors Ship player_id
 generate_pac_accessors Ship radius
-
-generate_pac_parent_accessors Ship kernel
 generate_pac_accessors Ship kernel
 
-generate_pac_parent_accessors Ship canvas_map
-generate_pac_parent_accessors Ship canvas_mini_map
 
-generate_pac_parent_accessors MapShip canvas_map
-generate_pac_parent_accessors MiniMapShip canvas_mini_map
 
 generate_pac_presentation_accessors MapShip canvas_map
 generate_pac_presentation_accessors MapShip bg_image
 generate_pac_presentation_accessors MiniMapShip canvas_mini_map
 
-generate_pac_parent_accessors MapShip id
-generate_pac_parent_accessors MiniMapShip id
 generate_pac_presentation_accessors MapShip id
 generate_pac_presentation_accessors MiniMapShip id
 
 
 method ShipAbstraction init {} {
     this set_id [lindex [split "$objName" "_"] 0]
-    this set_kernel [$this(control) get_parent_kernel]
+    this set_kernel [$this(control) get_parent_value kernel]
 }
 
 method ShipControl draw {} {
@@ -77,8 +69,8 @@ method ShipControl shut {} {
 
 # Map
 method MapShipPresentation init {} {
-    this set_canvas_map [$this(control) get_parent_canvas_map]
-    set num [expr (([lindex [split [$this(control) get_parent_id] ""] 1]) % 2)]
+    this set_canvas_map [$this(control) get_parent_value canvas_map]
+    set num [expr (([lindex [split [$this(control) get_parent_value id] ""] 1]) % 2)]
     this set_bg_image [get_ship_bg "s$num"]
 }
 
@@ -96,7 +88,7 @@ method MapShipPresentation destructor {} {
 
 # MiniMap
 method MiniMapShipPresentation init {} {
-    this set_canvas_mini_map [$this(control) get_parent_canvas_mini_map]
+    this set_canvas_mini_map [$this(control) get_parent_value canvas_mini_map]
 }
 
 method MiniMapShipPresentation draw {x y radius} {

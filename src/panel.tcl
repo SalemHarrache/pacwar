@@ -1,18 +1,15 @@
 # Génération d'un agent Panel
 generate_pac_agent Panel
 
-generate_pac_parent_accessors Panel kernel
-generate_pac_parent_accessors Panel frame_panel
-
 generate_pac_accessors Panel kernel
 generate_pac_accessors Panel volume_level
 
-generate_pac_presentation_accessors Panel frame_panel
+generate_pac_presentation_accessors Panel frame
 
 
 # Abstraction
 method PanelAbstraction init {} {
-    this set_kernel [$this(control) get_parent_kernel]
+    this set_kernel [$this(control) get_parent_value kernel]
     $this(kernel) Subscribe_after_Add_new_player $objName "$this(control) add_player_callback \$rep \$name"
     $this(kernel) Subscribe_after_Destroy_player $objName "$this(control) remove_player_callback \$id"
 }
@@ -60,14 +57,14 @@ method PanelControl send_position_to_player {player_id position} {
 
 # Presentation
 method PanelPresentation init {} {
-    this set_frame_panel [$this(control) get_parent_frame_panel]
+    this set_frame [$this(control) get_parent_value frame_panel_players]
     set this(player_frames) {}
-    set this(volume_label) [label $this(frame_panel).volume_label -justify center -text "Volume : "]
+    set this(volume_label) [label $this(frame).volume_label -justify center -text "Volume : "]
     this refresh
 }
 
 method PanelPresentation get_new_player_frame {} {
-    set new_frame [frame $this(frame_panel).frame_[llength $this(player_frames)]]
+    set new_frame [frame $this(frame).frame_[llength $this(player_frames)]]
     lappend this(player_frames) $new_frame
     return $new_frame
 }

@@ -5,11 +5,6 @@ generate_pac_accessors Planet position_y
 generate_pac_accessors Planet radius
 generate_pac_accessors Planet density
 
-generate_pac_parent_accessors Planet canvas_map
-generate_pac_parent_accessors Planet canvas_mini_map
-
-generate_pac_parent_accessors MapPlanet canvas_map
-generate_pac_parent_accessors MiniMapPlanet canvas_mini_map
 
 generate_pac_presentation_accessors MapPlanet canvas_map
 generate_pac_presentation_accessors MapPlanet bg_image
@@ -17,8 +12,6 @@ generate_pac_presentation_accessors MiniMapPlanet canvas_mini_map
 
 generate_pac_presentation_accessors MapPlanet id
 generate_pac_presentation_accessors MiniMapPlanet id
-
-generate_pac_parent_accessors MapPlanet id
 
 # Abstraction
 method PlanetAbstraction init {} {
@@ -40,7 +33,7 @@ method MapPlanetControl draw {x y radius} {
 # MapPlanetPresentation
 method MapPlanetPresentation init {} {
     this set_bg_image [get_random_planet_bg]
-    this set_canvas_map [$this(control) get_parent_canvas_map]
+    this set_canvas_map [$this(control) get_parent_value canvas_map]
 }
 
 method MapPlanetPresentation draw {x y radius} {
@@ -65,7 +58,7 @@ method MiniMapPlanetControl draw {x y radius} {
 
 # MiniMapPlanetPresentation
 method MiniMapPlanetPresentation init {} {
-    this set_canvas_mini_map [$this(control) get_parent_canvas_mini_map]
+    this set_canvas_mini_map [$this(control) get_parent_value canvas_mini_map]
 }
 
 method MiniMapPlanetPresentation draw {x y radius} {

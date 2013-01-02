@@ -1,16 +1,8 @@
-# Génération d'un agent pac multivue : MapUniverse et MiniMapUniverse
+# Génération d'un agent pac multivue : Universe + MapUniverse et MiniMapUniverse
 generate_pac_agent_multi_view "Universe" [list "Map" "MiniMap"]
 
-generate_pac_parent_accessors Universe kernel
 generate_pac_accessors Universe kernel
-# Génération d'un methode pour acceder au canvas_map parent depuis universe.
-generate_pac_parent_accessors Universe canvas_map
-generate_pac_parent_accessors Universe canvas_mini_map
-# Génération d'un methode pour acceder au canvas_map parent depuis les deux
-# vues de l'argent universe : MapUniverse et MiniMapUniverse
-generate_pac_parent_accessors MapUniverse canvas_map
-generate_pac_parent_accessors MiniMapUniverse canvas_mini_map
-# Generation des accesseurs pour les attributs
+
 generate_pac_presentation_accessors MapUniverse canvas_map
 generate_pac_presentation_accessors MapUniverse num_background
 generate_pac_presentation_accessors MiniMapUniverse canvas_mini_map
@@ -18,7 +10,7 @@ generate_pac_presentation_accessors MiniMapUniverse canvas_mini_map
 
 # UniverseAbstraction
 method UniverseAbstraction init {} {
-    this set_kernel [$this(control) get_parent_kernel]
+    this set_kernel [$this(control) get_parent_value kernel]
     $this(kernel) Subscribe_after_Add_new_planet $objName "$this(control) add_planet_callback \$rep \$x \$y \$radius \$density"
     $this(kernel) Subscribe_after_Add_new_ship $objName "$this(control) add_ship_callback \$rep \$x \$y \$radius \$id_player"
     $this(kernel) Subscribe_after_Start_fire $objName "$this(control) start_fire_callback \$rep \$this(L_bullets)"
@@ -92,7 +84,7 @@ method MapUniverseControl update_bullets {rep L_bullets} {
 # MapUniversePresentation ##
 method MapUniversePresentation init {} {
     this set_num_background 0
-    this set_canvas_map [$this(control) get_parent_canvas_map]
+    this set_canvas_map [$this(control) get_parent_value canvas_map]
     $this(canvas_map) configure -width 400 -height 200 -background "#191919"
 
     initBackground $this(canvas_map) [get_new_universe_bg]
@@ -123,7 +115,7 @@ method MapUniversePresentation update_bullets {rep L_bullets} {
 
 # MiniMapUniversePresentation ##
 method MiniMapUniversePresentation init {} {
-    this set_canvas_mini_map [$this(control) get_parent_canvas_mini_map]
+    this set_canvas_mini_map [$this(control) get_parent_value canvas_mini_map]
     $this(canvas_mini_map) configure -width 200 -height 200 -background "#1E1E1E"
 
     set background_file [abspath .. ressources universe background_mini.jpg]

@@ -294,6 +294,16 @@ proc generate_pac_agent {agent {abstraction 1} {presentation 1}} {
   }
       method ${agent}Control destructor {} {
   }"
+  append cmd "
+  method ${agent}Control get_parent_value {var}  {
+    set parent_value_exist \[catch {set value \[\$this(parent) get_\$var\]}\]
+    if { \$parent_value_exist != 0 } {
+      # Try get_parent(var)
+      set value \[\$this(parent) get_parent_value \$var\]
+    }
+    return \$value
+  }
+  "
   # puts $cmd
   eval $cmd
 }
@@ -374,28 +384,6 @@ proc generate_pac_presentation_accessors {agent var} {
   # puts $cmd
   eval $cmd
 }
-
-
-proc generate_pac_parent_accessors {agent var} {
-  set cmd ""
-  append cmd "
-  method ${agent}Control get_parent_$var { }  {
-    #return \[\$this(parent) get_$var\]
-    set parent_value_exist \[catch {set value \[\$this(parent) get_$var\]}\]
-    if { \$parent_value_exist != 0 } {
-      # Try get_parent_$var
-      set sub_parent_value_exist \[catch {set value \[\$this(parent) get_parent_$var\]}\]
-      if { \$sub_parent_value_exist != 0 } {
-          puts \"\\nERROR: Inexistant value : $var!!!\"
-          exit 1
-      }
-    }
-    return \$value
-  }
-  "
-  eval $cmd
-}
-
 
 proc generate_simple_accessors {class var} {
   if {[is_defined "${class}"]} {
