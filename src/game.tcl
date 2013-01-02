@@ -98,7 +98,7 @@ method GamePresentation init {} {
     wm aspect $this(tk_parent) 3 2 3 2
     wm title $this(tk_parent) "PacWar ! - $VERSION"
     wm minsize $this(tk_parent)  900 800
-    this set_display_mode vertical
+    this set_display_mode normal
 
     this set_canvas_map [canvas $this(tk_parent).canvas_map]
     this set_frame_wrapper [frame $this(tk_parent).frame_wrapper -relief raised -borderwidth 1]
@@ -114,28 +114,20 @@ method GamePresentation init {} {
     pack $this(frame_panel_sound) -expand 1 -fill both
     pack $this(canvas_mini_map) -fill both
 
-    bind $this(tk_parent) <Control-Key-p> "$objName switch_view_mode; $objName refresh"
+    bind $this(tk_parent) <Control-Key-p> "$objName switch_display_mode; $objName refresh"
 }
 
-method GamePresentation switch_view_mode {} {
-    if {[this get_display_mode] == "vertical"} {
-        this set_display_mode "horizontal"
+method GamePresentation switch_display_mode {} {
+    if {[this get_display_mode] == "normal"} {
+        this set_display_mode "fullscreen"
     } else {
-        this set_display_mode "vertical"
+        this set_display_mode "normal"
     }
 }
 
 method GamePresentation refresh {} {
-    pack forget $this(canvas_map) $this(frame_wrapper) $this(frame_panel_players) $this(canvas_mini_map)
-    if {$this(display_mode) == "vertical"} {
-        pack configure $this(canvas_map)  -expand 1 -side right -fill both
+    pack forget $this(frame_wrapper)
+    if {$this(display_mode) == "normal"} {
         pack configure $this(frame_wrapper) -side left -fill both
-        pack configure $this(frame_panel_players) -expand 1 -fill both
-        pack configure $this(canvas_mini_map) -fill both
-    } else {
-        pack configure $this(frame_wrapper) -side right -fill both
-        pack configure $this(frame_panel_players) -expand 1 -fill both
-        pack configure $this(canvas_mini_map) -fill both
-        pack configure $this(canvas_map)  -expand 1 -side right -fill both
     }
 }
