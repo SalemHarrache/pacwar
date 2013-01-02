@@ -42,7 +42,8 @@ method ShipControl move {x y} {
     this set_position_x [expr [this get_position_x] + [expr $x * 10]]
     this set_position_y [expr [this get_position_y] + [expr $y * 10]]
     [this get_kernel] Update_ship [this get_player_id] [this get_id] \
-                                  [dict create x [this get_position_x] y [this get_position_y]]
+                                  [dict create x [this get_position_x] \
+                                               y [this get_position_y]]
 }
 
 method ShipControl move_left {} {
@@ -67,7 +68,10 @@ method ShipControl get_fire_angle {} {
 
 method ShipControl shut {} {
     [this get_kernel] Update_ship [this get_player_id] [this get_id] \
-        [dict create fire_velocity 10 fire_angle [this get_fire_angle]]
+        [dict create fire_velocity 10 \
+                     fire_angle [this get_fire_angle] \
+                     x [this get_position_x] \
+                     y [this get_position_y]]
 }
 
 

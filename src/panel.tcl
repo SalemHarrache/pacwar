@@ -53,6 +53,10 @@ method PanelControl send_event_from_player {event id} {
     $this(parent) send_event_from_player $event $id
 }
 
+method PanelControl send_position_to_player {player_id position} {
+    set player [dict get $this(players) $player_id]
+    $player set_position $position
+}
 
 # Presentation
 method PanelPresentation init {} {

@@ -19,12 +19,12 @@ generate_pac_presentation_accessors MiniMapUniverse canvas_mini_map
 # UniverseAbstraction
 method UniverseAbstraction init {} {
     this set_kernel [$this(control) get_parent_kernel]
-    $this(kernel) Subscribe_after_Add_new_planet A "$this(control) add_planet_callback \$rep \$x \$y \$radius \$density"
-    $this(kernel) Subscribe_after_Add_new_ship A "$this(control) add_ship_callback \$rep \$x \$y \$radius \$id_player"
-    $this(kernel) Subscribe_after_Start_fire A "$this(control) start_fire_callback \$rep \$this(L_bullets)"
-    $this(kernel) Subscribe_after_Compute_a_simulation_step A "$this(control) update_fire_callback \$rep \$this(L_bullets)"
-    $this(kernel) Subscribe_after_Destroy_ship A "$this(control) destroy_ship_callback \$id"
-    $this(kernel) Subscribe_after_Destroy_planet A "$this(control) destroy_planet_callback \$id"
+    $this(kernel) Subscribe_after_Add_new_planet $objName "$this(control) add_planet_callback \$rep \$x \$y \$radius \$density"
+    $this(kernel) Subscribe_after_Add_new_ship $objName "$this(control) add_ship_callback \$rep \$x \$y \$radius \$id_player"
+    $this(kernel) Subscribe_after_Start_fire $objName "$this(control) start_fire_callback \$rep \$this(L_bullets)"
+    $this(kernel) Subscribe_after_Compute_a_simulation_step $objName "$this(control) update_fire_callback \$rep \$this(L_bullets)"
+    $this(kernel) Subscribe_after_Destroy_ship $objName "$this(control) destroy_ship_callback \$id"
+    $this(kernel) Subscribe_after_Destroy_planet $objName "$this(control) destroy_planet_callback \$id"
 }
 
 # UniverseControl

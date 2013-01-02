@@ -31,6 +31,7 @@ generate_pac_presentation_accessors Game mute
 method GameAbstraction init {} {
     this set_kernel [SWL_FC kernel]
     $this(kernel) Subscribe_after_Destroy_ship $objName "$this(control) destroy_ship_callback \$id"
+    $this(kernel) Subscribe_after_Update_ship $objName "$this(control) update_ship_callback \$id \$D_update"
 }
 
 # Control  ##
@@ -50,13 +51,16 @@ method GameControl sound_changed {v} {
 
 
 method GameControl add_player {name position_x position_y} {
-    set player_id [[this get_kernel] Add_new_player $name]
-    set ship_id [[this get_kernel] Add_new_ship $player_id $position_x $position_y 50]
+    set kernel [this get_kernel]
+    set player_id [$kernel Add_new_player $name]
+    set ship_id [$kernel Add_new_ship $player_id $position_x $position_y 50]
     dict set this(players) $player_id $ship_id
     dict set this(ships) $ship_id $player_id
+    $kernel Update_ship $player_id $ship_id \
+                [dict create x $position_x y $position_y]
 }
 
-method GameControl add_planet { position_x position_y radius density} {
+method GameControl add_planet {position_x position_y radius density} {
     [this get_kernel] Add_new_planet $position_x $position_y $radius $density
 }
 
@@ -73,6 +77,13 @@ method GameControl destroy_ship_callback {ship_id} {
     set this(players) [dict remove $this(players) $player_id]
 }
 
+method GameControl update_ship_callback {ship_id D_update} {
+    set player_id [dict get $this(ships) $ship_id]
+    set x [dict get $D_update x]
+    set y [dict get $D_update y]
+    $this(panel) send_position_to_player $player_id "($x , $y)"
+}
+
 method GameControl start_fire {} {
     foreach {ship_id player}  $this(ships) {
         $this(universe) send_event_to_ship "shut" $ship_id
@@ -86,6 +97,7 @@ method GamePresentation init {} {
     global VERSION
     wm aspect $this(tk_parent) 3 2 3 2
     wm title $this(tk_parent) "PacWar ! - $VERSION"
+    wm minsize $this(tk_parent)  800 700
     this set_display_mode vertical
 
     this set_canvas_map [canvas $this(tk_parent).canvas_map]
