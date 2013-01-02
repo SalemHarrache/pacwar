@@ -83,8 +83,9 @@ method GameControl start_fire {} {
 
 # Presentation  ##
 method GamePresentation init {} {
+    global VERSION
     wm aspect $this(tk_parent) 3 2 3 2
-    wm title $this(tk_parent) "PacWar !"
+    wm title $this(tk_parent) "PacWar ! - $VERSION"
     this set_display_mode vertical
 
     this set_canvas_map [canvas $this(tk_parent).canvas_map]

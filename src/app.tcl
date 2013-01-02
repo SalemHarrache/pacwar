@@ -3,6 +3,8 @@
 # exec wish ./lib/tkcon.tcl -load Tk "$0" "$@" \
 exec wish "$0" "$@"
 
+set VERSION 1.1-dev
+
 package require Img
 package require Tk
 
