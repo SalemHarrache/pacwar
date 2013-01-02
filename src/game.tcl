@@ -33,19 +33,13 @@ method GameAbstraction init {} {
 
 # Control  ##
 method GameControl init {} {
+    set this(universe) ""
+    set this(panel) ""
+    set this(sfx_manager) ""
     this set_players [dict create]
     this set_ships [dict create]
     bind . <Key-space>  "$objName start_fire"
 }
-
-method GameControl toggle_sound {} {
-    $this(sfx_manager) toggle_sound
-}
-
-method GameControl sound_changed {v} {
-    $this(panel) sound_changed $v
-}
-
 
 method GameControl add_player {name position_x position_y} {
     set kernel [this get_kernel]
@@ -78,7 +72,9 @@ method GameControl update_ship_callback {ship_id D_update} {
     set player_id [dict get $this(ships) $ship_id]
     set x [dict get $D_update x]
     set y [dict get $D_update y]
-    $this(panel) send_position_to_player $player_id "($x , $y)"
+    if {$this(panel) != ""} {
+        $this(panel) send_position_to_player $player_id "($x , $y)"
+    }
 }
 
 method GameControl start_fire {} {
@@ -86,6 +82,13 @@ method GameControl start_fire {} {
         $this(universe) send_event_to_ship "shut" $ship_id
     }
     [this get_kernel] Start_fire
+}
+
+
+method GameControl gameover {} {
+    if {$this(sfx_manager) != ""} {
+        $this(sfx_manager) set_mode "end"
+    }
 }
 
 
@@ -123,15 +126,15 @@ method GamePresentation switch_view_mode {} {
 }
 
 method GamePresentation refresh {} {
-    pack forget $this(canvas_map) $this(frame_wrapper) $this(frame_panel_player) $this(canvas_mini_map)
+    pack forget $this(canvas_map) $this(frame_wrapper) $this(frame_panel_players) $this(canvas_mini_map)
     if {$this(display_mode) == "vertical"} {
         pack configure $this(canvas_map)  -expand 1 -side right -fill both
         pack configure $this(frame_wrapper) -side left -fill both
-        pack configure $this(frame_panel_player) -expand 1 -fill both
+        pack configure $this(frame_panel_players) -expand 1 -fill both
         pack configure $this(canvas_mini_map) -fill both
     } else {
         pack configure $this(frame_wrapper) -side right -fill both
-        pack configure $this(frame_panel_player) -expand 1 -fill both
+        pack configure $this(frame_panel_players) -expand 1 -fill both
         pack configure $this(canvas_mini_map) -fill both
         pack configure $this(canvas_map)  -expand 1 -side right -fill both
     }
