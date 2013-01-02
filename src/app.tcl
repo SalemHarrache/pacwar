@@ -29,22 +29,21 @@ UniverseControl universe game .
 SoundControl sfx_manager game ""
 
 # 2 players
-game add_player "feisar" 300 500
-game add_player "goteki"  200 100
+game add_player "goteki" 360 860
+game add_player "feisar"  600 300
 # game add_player "rastar"  400 500
 # game add_player "omega"  400 500
 
 # 10 planets
-game add_planet 190 249 80 50
-game add_planet 27 1001 80 50
-game add_planet 10 10 80 100
-game add_planet 642 147 80 200
-game add_planet 600 700 80 50
-game add_planet 1400 1001 80 50
-game add_planet 1200 1500 80 50
-game add_planet 1600 800 80 50
-
-# PlanetControl planet_1 universe .
+game add_planet 200 500 80 100
+game add_planet 600 500 80 100
+game add_planet 400 200 80 100
+# game add_planet 10 10 80 100
+# game add_planet 642 147 80 200
+# game add_planet 1200 400 80 100
+# game add_planet 1400 1001 80 50
+# game add_planet 1200 1500 80 50
+# game add_planet 1600 800 80 50
 
 if {$argc > 0} {
     Introspact introspact game
