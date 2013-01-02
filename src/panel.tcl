@@ -2,7 +2,6 @@
 generate_pac_agent Panel
 
 generate_pac_accessors Panel kernel
-generate_pac_accessors Panel volume_level
 
 generate_pac_presentation_accessors Panel frame
 
@@ -21,10 +20,6 @@ method PanelControl init {} {
      set this(players) [dict create]
 }
 
-method PanelControl sound_changed {v} {
-    this user_change_volume_level $v
-}
-
 method PanelControl add_player_callback {id name} {
     set new_player [PlayerControl ${id}_${name} $objName [$this(presentation) get_new_player_frame]]
     $new_player set_binding
@@ -36,6 +31,9 @@ method PanelControl remove_player_callback {id} {
     set player [dict get $this(players) $id]
     set this(players) [dict remove $this(players) $id]
     $player user_change_status 0
+    if {[llength $this(players)] == 2} {
+        $this(parent) gameover
+    }
 }
 
 method PanelControl get_player {id} {
@@ -59,7 +57,6 @@ method PanelControl send_position_to_player {player_id position} {
 method PanelPresentation init {} {
     this set_frame [$this(control) get_parent_value frame_panel_players]
     set this(player_frames) {}
-    set this(volume_label) [label $this(frame).volume_label -justify center -text "Volume : "]
     this refresh
 }
 
@@ -70,17 +67,10 @@ method PanelPresentation get_new_player_frame {} {
 }
 
 method PanelPresentation refresh {} {
-    pack forget $this(volume_label)
     foreach frame $this(player_frames) {
         pack forget $frame
     }
     foreach frame $this(player_frames) {
         pack configure $frame  -expand 1
     }
-    pack configure $this(volume_label) -expand 1
-}
-
-
-method PanelPresentation set_volume_level {v} {
-    $this(volume_label) configure -text "Volume :  $v"
 }
