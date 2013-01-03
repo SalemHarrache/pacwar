@@ -26,6 +26,17 @@ method UniverseControl init {} {
     set this(planets) [dict create]
 }
 
+method UniverseControl reset {} {
+    foreach {ship_id ship}  $this(ships) {
+        $ship dispose
+    }
+    foreach {planet_id planet}  $this(planets) {
+        $planet dispose
+    }
+    this init
+    $this(abstraction) init
+}
+
 method UniverseControl add_ship_callback {id x y radius player_id} {
     set new_ship [ShipControl $id $objName ""]
     $new_ship set_position_x $x

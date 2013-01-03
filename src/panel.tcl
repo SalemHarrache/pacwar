@@ -20,6 +20,15 @@ method PanelControl init {} {
      set this(players) [dict create]
 }
 
+method PanelControl reset {} {
+    foreach child $this(children) {
+        $child dispose
+    }
+    this init
+    $this(abstraction) init
+    $this(presentation) reset
+}
+
 method PanelControl add_player_callback {id name} {
     set new_player [PlayerControl ${id}_${name} $objName [$this(presentation) get_new_player_frame]]
     $new_player set_binding
@@ -58,6 +67,13 @@ method PanelPresentation init {} {
     this set_frame [$this(control) get_parent_value frame_panel_players]
     set this(player_frames) {}
     this refresh
+}
+
+method PanelPresentation reset {} {
+    foreach {frame} $this(player_frames) {
+        destroy $frame
+    }
+    this init
 }
 
 method PanelPresentation get_new_player_frame {} {

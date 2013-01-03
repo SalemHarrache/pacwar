@@ -3,8 +3,13 @@ PACWar
 
 Projet IHM RICM5 utilisant le modèle de conception/programmation PAC.
 
-.. image:: http://i.imgur.com/HqA1M.png
+
+.. image:: http://i.imgur.com/jiuac.png
     :align: center
+
+.. image:: http://i.imgur.com/EanKX.png
+    :align: center
+
 
 Installation
 ------------
@@ -25,7 +30,7 @@ Pour lancer le jeu utiliser le script main `app.tcl`:
 
   cd src; wish ./app.tcl introspac
 
-ou avec make:
+ou plus simplement avec make:
 
 ::
 

@@ -31,6 +31,11 @@ method GameAbstraction init {} {
     $this(kernel) Subscribe_after_Update_ship $objName "$this(control) update_ship_callback \$id \$D_update"
 }
 
+method GameAbstraction reset {} {
+    $this(kernel) dispose
+    this init
+}
+
 # Control  ##
 method GameControl init {} {
     set this(universe) ""
@@ -39,6 +44,14 @@ method GameControl init {} {
     this set_players [dict create]
     this set_ships [dict create]
     bind . <Key-space>  "$objName start_fire"
+}
+
+method GameControl reset {} {
+    this set_players [dict create]
+    this set_ships [dict create]
+    $this(abstraction) reset
+    $this(universe) reset
+    $this(panel) reset
 }
 
 method GameControl add_player {name position_x position_y} {
@@ -115,6 +128,10 @@ method GamePresentation init {} {
     pack $this(canvas_mini_map) -fill both
 
     bind $this(tk_parent) <Control-Key-p> "$objName switch_display_mode; $objName refresh"
+}
+
+method GamePresentation destructor {} {
+    destroy $this(tk_parent)
 }
 
 method GamePresentation switch_display_mode {} {
