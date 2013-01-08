@@ -52,6 +52,7 @@ method GameControl reset {} {
     $this(abstraction) reset
     $this(universe) reset
     $this(panel) reset
+    $this(sfx_manager) reset
 }
 
 method GameControl add_player {name position_x position_y} {

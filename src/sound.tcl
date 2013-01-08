@@ -64,6 +64,12 @@ method SoundControl toggle_sound {} {
     }
 }
 
+method SoundControl reset {} {
+    this set_volume_level 0
+    this set_mode battle
+}
+
+
 # Presentation
 method SoundPresentation init {} {
     this set_frame [$this(control) get_parent_value frame_panel_sound]
