@@ -49,6 +49,10 @@ method SoundAbstraction unmute {} {
     this set_volume_level 100
 }
 
+method SoundAbstraction destructor {} {
+    this mute
+}
+
 
 # Control
 method SoundControl init {} {
