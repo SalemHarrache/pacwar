@@ -111,7 +111,7 @@ method GamePresentation init {} {
     global VERSION
     wm aspect $this(tk_parent) 3 2 3 2
     wm title $this(tk_parent) "PacWar ! - $VERSION"
-    wm minsize $this(tk_parent)  900 800
+    wm minsize $this(tk_parent)  900 700
     this set_display_mode normal
 
     this set_canvas_map [canvas $this(tk_parent).canvas_map]

@@ -32,14 +32,14 @@ SoundControl sfx_manager game
 
 proc new_game {} {
     # 2 players
-    game add_player "goteki" 360 760
-    game add_player "feisar"  80 330
+    game add_player "goteki" 360 710
+    game add_player "feisar"  80 280
     # game add_player "omega"  400 500
 
     # 3 planets
-    game add_planet 200 400 80 100
-    game add_planet 600 400 80 100
-    game add_planet 400 100 80 100
+    game add_planet 200 350 80 100
+    game add_planet 600 350 80 100
+    game add_planet 400 50 80 100
 }
 
 new_game
