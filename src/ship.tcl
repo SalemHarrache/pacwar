@@ -22,15 +22,15 @@ method ShipAbstraction init {} {
 }
 
 method ShipControl draw {} {
-    [$this(map) attribute presentation] draw [this get_position_x] [this get_position_y] [this get_radius]
-    [$this(minimap) attribute presentation] draw [expr ([this get_position_x] / 10)] \
+    $this(map) draw [this get_position_x] [this get_position_y] [this get_radius]
+    $this(minimap) draw [expr ([this get_position_x] / 10)] \
                                                  [expr ([this get_position_y] / 10)] \
                                                  [expr ([this get_radius] / 10)]
 }
 
 method ShipControl move {x y} {
-    [$this(map) attribute presentation] move $x $y
-    [$this(minimap) attribute presentation] move $x $y
+    $this(map) move $x $y
+    $this(minimap) move $x $y
     this set_position_x [expr [this get_position_x] + [expr $x * 10]]
     this set_position_y [expr [this get_position_y] + [expr $y * 10]]
     [this get_kernel] Update_ship [this get_player_id] [this get_id] \
@@ -67,7 +67,16 @@ method ShipControl shut {} {
 }
 
 
+
 # Map
+method MapShipControl draw {x y radius} {
+    $this(presentation) draw  $x  $y $radius
+}
+
+method MapShipControl move {x y} {
+    $this(presentation) move $x $y
+}
+
 method MapShipPresentation init {} {
     this set_canvas_map [$this(control) get_parent_value canvas_map]
     set num [expr (([lindex [split [$this(control) get_parent_value id] ""] 1]) % 2)]
@@ -87,6 +96,14 @@ method MapShipPresentation destructor {} {
 }
 
 # MiniMap
+method MiniMapShipControl draw {x y radius} {
+    $this(presentation) draw  $x  $y $radius
+}
+
+method MiniMapShipControl move {x y} {
+    $this(presentation) move $x $y
+}
+
 method MiniMapShipPresentation init {} {
     this set_canvas_mini_map [$this(control) get_parent_value canvas_mini_map]
 }
